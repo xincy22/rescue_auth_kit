@@ -90,4 +90,47 @@ class VaultSession extends ChangeNotifier {
     await _repo.save(_handle!);
     notifyListeners();
   }
+
+  Future<void> addRecoverySet({
+    required String title,
+    required List<String> codes,
+  }) async {
+    final h = _handle;
+    if (h == null) throw const VaultLockedException();
+
+    final normalizedCodes = codes
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList(growable: false);
+
+    final set = RecoveryCodeSet(
+      id: _uuid.v4(),
+      title: title.trim(),
+      codes: normalizedCodes,
+      createdAt: DateTime.now(),
+    );
+
+    final updated = h.data.copyWith(
+      recoveryCodeSets: <RecoveryCodeSet>[...h.data.recoveryCodeSets, set],
+    );
+
+    _handle = h.copyWith(data: updated);
+    await _repo.save(_handle!);
+    notifyListeners();
+  }
+
+  Future<void> removeRecoverySet(String id) async {
+    final h = _handle;
+    if (h == null) throw const VaultLockedException();
+
+    final updated = h.data.copyWith(
+      recoveryCodeSets: h.data.recoveryCodeSets
+          .where((e) => e.id != id)
+          .toList(growable: false),
+    );
+
+    _handle = h.copyWith(data: updated);
+    await _repo.save(_handle!);
+    notifyListeners();
+  }
 }
