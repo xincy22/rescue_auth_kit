@@ -1,5 +1,7 @@
-import 'dart:async';
+import 'package:flutter/foundation.dart';
+import 'package:uuid/uuid.dart';
 
+import '../import/otpauth_parser.dart';
 import 'vault_models.dart';
 import 'vault_repository.dart';
 
@@ -13,8 +15,9 @@ class VaultLockedException implements Exception {
 
 /// In-memory session state. UI should talk to this instead of directly using
 /// repository/crypto.
-class VaultSession {
+class VaultSession extends ChangeNotifier {
   final VaultRepository _repo;
+  final Uuid _uuid = const Uuid();
   VaultSessionStatus _status = VaultSessionStatus.locked;
   VaultHandle? _handle;
 
@@ -23,7 +26,6 @@ class VaultSession {
   VaultSessionStatus get status => _status;
   bool get isUnlocked => _status == VaultSessionStatus.unlocked;
 
-  /// Returns current decrypted data when unlocked; throws if locked.
   VaultData get data {
     final h = _handle;
     if (h == null) throw const VaultLockedException();
@@ -32,44 +34,60 @@ class VaultSession {
 
   Future<bool> vaultExists() => _repo.vaultFileExists();
 
-  /// Create a brand new vault file on disk and unlock session.
   Future<void> createNew({required String password}) async {
     final handle = await _repo.createNewVault(password: password);
     _handle = handle;
     _status = VaultSessionStatus.unlocked;
+    notifyListeners();
   }
 
-  /// Open existing vault and unlock session.
-  ///
-  /// Throws:
-  /// - [VaultIoException] (file not found)
-  /// - [VaultFormatException] (corrupted/unsupported)
-  /// - [VaultAuthException] (wrong password / tampered ciphertext)
   Future<void> unlock({required String password}) async {
     final handle = await _repo.open(password: password);
     _handle = handle;
     _status = VaultSessionStatus.unlocked;
+    notifyListeners();
   }
 
-  /// Drop decrypted material from memory (best-effort).
-  ///
-  /// Note: Dart GC is nondeterministic; we reduce exposure by removing references.
   void lock() {
     _handle = null;
     _status = VaultSessionStatus.locked;
+    notifyListeners();
   }
 
-  /// Replace current data in memory (unlocked only). Does NOT persist automatically.
   void setData(VaultData newData) {
     final h = _handle;
     if (h == null) throw const VaultLockedException();
     _handle = h.copyWith(data: newData);
+    notifyListeners();
   }
 
-  /// Persist current data to the vault file (unlocked only).
   Future<void> save() async {
     final h = _handle;
     if (h == null) throw const VaultLockedException();
     await _repo.save(h);
+  }
+
+  Future<void> addTotpFromParsed(ParsedTotp parsed) async {
+    final h = _handle;
+    if (h == null) throw const VaultLockedException();
+
+    final entry = TotpEntry(
+      id: _uuid.v4(),
+      issuer: parsed.issuer,
+      accountName: parsed.accountName,
+      secretBase32: parsed.secretBase32,
+      algorithm: parsed.algorithm,
+      digits: parsed.digits,
+      period: parsed.period,
+      createdAt: DateTime.now(),
+    );
+
+    final updated = h.data.copyWith(
+      totpEntries: <TotpEntry>[...h.data.totpEntries, entry],
+    );
+
+    _handle = h.copyWith(data: updated);
+    await _repo.save(_handle!);
+    notifyListeners();
   }
 }
