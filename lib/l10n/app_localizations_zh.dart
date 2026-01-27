@@ -215,8 +215,4 @@ class AppLocalizationsZh extends AppLocalizations {
   String backupImportFailed(Object error) {
     return '导入失败：$error';
   }
-
-  @override
-  String get backupChecklist =>
-      '建议验证：\n1) 手机导出 -> 电脑导入\n2) 重置手机 -> 电脑导出 -> 手机导入';
 }

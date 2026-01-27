@@ -221,8 +221,4 @@ class AppLocalizationsEn extends AppLocalizations {
   String backupImportFailed(Object error) {
     return 'Error importing vault: $error';
   }
-
-  @override
-  String get backupChecklist =>
-      'Suggested verification:\n1) Export on phone -> import on desktop\n2) Reset phone -> export on desktop -> import on phone';
 }

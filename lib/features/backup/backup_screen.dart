@@ -225,8 +225,6 @@ class BackupScreen extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Text(l10n.backupChecklist),
         ],
       ),
     );

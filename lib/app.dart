@@ -24,7 +24,17 @@ class RescueAuthKitApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.indigo),
+        theme: ThemeData(
+          useMaterial3: true,
+          colorSchemeSeed: Colors.indigo,
+          fontFamilyFallback: const [
+            'Microsoft YaHei UI',
+            'Microsoft YaHei',
+            'PingFang SC',
+            'Noto Sans CJK SC',
+            'Noto Sans SC',
+          ],
+        ),
         localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,

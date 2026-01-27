@@ -60,6 +60,5 @@
   "backupPasswordTitle": "Enter the backup's master password",
   "backupImportedFrom": "Vault imported from {name}",
   "backupWrongPassword": "Incorrect password (or backup file is corrupted)",
-  "backupImportFailed": "Error importing vault: {error}",
-  "backupChecklist": "Suggested verification:\n1) Export on phone -> import on desktop\n2) Reset phone -> export on desktop -> import on phone"
+  "backupImportFailed": "Error importing vault: {error}"
 }

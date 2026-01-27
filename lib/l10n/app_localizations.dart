@@ -469,12 +469,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error importing vault: {error}'**
   String backupImportFailed(Object error);
-
-  /// No description provided for @backupChecklist.
-  ///
-  /// In en, this message translates to:
-  /// **'Suggested verification:\n1) Export on phone -> import on desktop\n2) Reset phone -> export on desktop -> import on phone'**
-  String get backupChecklist;
 }
 
 class _AppLocalizationsDelegate
