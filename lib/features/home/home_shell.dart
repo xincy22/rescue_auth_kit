@@ -59,7 +59,7 @@ class _HomeShellState extends State<HomeShell> {
   Widget? _buildFab(BuildContext context) {
     if (_index == 0) {
       return FloatingActionButton(
-        onPressed: () => _addTotp(context),
+        onPressed: _addTotp,
         child: const Icon(Icons.add),
       );
     }
@@ -74,7 +74,7 @@ class _HomeShellState extends State<HomeShell> {
     return null;
   }
 
-  Future<void> _addTotp(BuildContext context) async {
+  Future<void> _addTotp() async {
     final isAndroid =
         !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
@@ -105,10 +105,12 @@ class _HomeShellState extends State<HomeShell> {
     String? uriText;
 
     if (action == _AddTotpAction.scan) {
-      uriText = await Navigator.of(
-        context,
-      ).push<String?>(MaterialPageRoute(builder: (_) => const ScanScreen()));
+      if (!mounted) return;
+      uriText = await Navigator.of(context).push<String?>(
+        MaterialPageRoute(builder: (_) => const ScanScreen()),
+      );
     } else {
+      if (!mounted) return;
       uriText = await showPasteOtpauthDialog(context);
     }
 

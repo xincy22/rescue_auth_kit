@@ -57,6 +57,12 @@ class _UnlockScreenState extends State<UnlockScreen> {
               onSubmitted: (_) => _busy ? null : _unlock(),
             ),
             const SizedBox(height: 12),
+            if (_error != null)
+              Text(
+                _error!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+            if (_error != null) const SizedBox(height: 12),
             SizedBox(
               width: double.infinity,
               child: FilledButton(

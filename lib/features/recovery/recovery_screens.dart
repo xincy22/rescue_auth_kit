@@ -19,7 +19,7 @@ class RecoveryScreen extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.all(12),
       itemCount: sets.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      separatorBuilder: (context, index) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
         final s = sets[index];
         return Card(
@@ -52,6 +52,7 @@ class RecoveryScreen extends StatelessWidget {
                     ],
                   ),
                 );
+                if (!context.mounted) return;
                 if (ok == true) {
                   await context.read<VaultSession>().removeRecoverySet(s.id);
                 }
@@ -95,7 +96,7 @@ class RecoveryDetailScreen extends StatelessWidget {
       body: ListView.separated(
         padding: const EdgeInsets.all(12),
         itemCount: set.codes.length,
-        separatorBuilder: (_, __) => const Divider(),
+        separatorBuilder: (context, index) => const Divider(),
         itemBuilder: (context, index) {
           final code = set.codes[index];
           return ListTile(
