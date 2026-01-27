@@ -60,7 +60,7 @@ class _TotpScreenState extends State<TotpScreen> {
     return ListView.separated(
       padding: const EdgeInsets.all(12),
       itemCount: entries.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      separatorBuilder: (context, index) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
         final e = entries[index];
 
@@ -75,7 +75,8 @@ class _TotpScreenState extends State<TotpScreen> {
             length: e.digits,
             interval: e.period,
             algorithm: _mapAlgorithm(e.algorithm),
-            isGoogle: false,
+            // otp treats base32 secrets as "Google" format.
+            isGoogle: true,
           );
         } catch (_) {
           code = 'Error';
