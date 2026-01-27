@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/vault/vault_session.dart';
+import '../../l10n/app_localizations.dart';
+import '../backup/backup_screen.dart';
 import '../recovery/recovery_screens.dart';
 import '../scan/confirm_import_screen.dart';
 import '../scan/paste_uri_dialog.dart';
 import '../scan/scan_screen.dart';
 import '../totp/totp_screen.dart';
-import '../backup/backup_screen.dart';
 
 enum _AddTotpAction { scan, paste }
 
@@ -24,16 +25,17 @@ class _HomeShellState extends State<HomeShell> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final pages = const [TotpScreen(), RecoveryScreen(), BackupScreen()];
 
-    final titles = const ['TOTP', 'Recovery', 'Backup'];
+    final titles = [l10n.tabTotp, l10n.tabRecovery, l10n.tabBackup];
 
     return Scaffold(
       appBar: AppBar(
         title: Text(titles[_index]),
         actions: [
           IconButton(
-            tooltip: 'Lock Vault',
+            tooltip: l10n.lockTooltip,
             onPressed: () => context.read<VaultSession>().lock(),
             icon: const Icon(Icons.lock),
           ),
@@ -43,12 +45,12 @@ class _HomeShellState extends State<HomeShell> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (index) => setState(() => _index = index),
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.shield), label: 'TOTP'),
-          NavigationDestination(icon: Icon(Icons.key), label: 'Recovery'),
+        destinations: [
+          NavigationDestination(icon: const Icon(Icons.shield), label: l10n.tabTotp),
+          NavigationDestination(icon: const Icon(Icons.key), label: l10n.tabRecovery),
           NavigationDestination(
-            icon: Icon(Icons.import_export),
-            label: 'Backup',
+            icon: const Icon(Icons.import_export),
+            label: l10n.tabBackup,
           ),
         ],
       ),
@@ -75,6 +77,7 @@ class _HomeShellState extends State<HomeShell> {
   }
 
   Future<void> _addTotp() async {
+    final l10n = AppLocalizations.of(context);
     final isAndroid =
         !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
@@ -87,12 +90,12 @@ class _HomeShellState extends State<HomeShell> {
             if (isAndroid)
               ListTile(
                 leading: const Icon(Icons.qr_code_scanner),
-                title: const Text('Scan QR'),
+                title: Text(l10n.addTotpSheetScan),
                 onTap: () => Navigator.pop(ctx, _AddTotpAction.scan),
               ),
             ListTile(
               leading: const Icon(Icons.paste),
-              title: const Text('Paste otpauth URI'),
+              title: Text(l10n.addTotpSheetPaste),
               onTap: () => Navigator.pop(ctx, _AddTotpAction.paste),
             ),
           ],

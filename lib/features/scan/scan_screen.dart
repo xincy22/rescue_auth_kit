@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
+import '../../l10n/app_localizations.dart';
+
 class ScanScreen extends StatefulWidget {
   const ScanScreen({super.key});
 
@@ -20,8 +22,9 @@ class _ScanScreenState extends State<ScanScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Scan QR Code')),
+      appBar: AppBar(title: Text(l10n.addTotpSheetScan)),
       body: MobileScanner(
         controller: _controller,
         onDetect: (result) {

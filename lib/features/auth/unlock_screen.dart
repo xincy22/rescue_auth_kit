@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/vault/vault_repository.dart';
 import '../../core/vault/vault_session.dart';
+import '../../l10n/app_localizations.dart';
 
 class UnlockScreen extends StatefulWidget {
   const UnlockScreen({super.key});
@@ -23,6 +24,7 @@ class _UnlockScreenState extends State<UnlockScreen> {
   }
 
   Future<void> _unlock() async {
+    final l10n = AppLocalizations.of(context);
     setState(() {
       _busy = true;
       _error = null;
@@ -31,9 +33,9 @@ class _UnlockScreenState extends State<UnlockScreen> {
     try {
       await context.read<VaultSession>().unlock(password: _pw.text);
     } on VaultAuthException {
-      setState(() => _error = 'Incorrect password');
+      setState(() => _error = l10n.incorrectPassword);
     } catch (e) {
-      setState(() => _error = 'Failed to unlock vault: $e');
+      setState(() => _error = l10n.unlockFailed(e.toString()));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -41,8 +43,9 @@ class _UnlockScreenState extends State<UnlockScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Unlock Vault')),
+      appBar: AppBar(title: Text(l10n.unlockVaultTitle)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -50,9 +53,9 @@ class _UnlockScreenState extends State<UnlockScreen> {
             TextField(
               controller: _pw,
               obscureText: true,
-              decoration: const InputDecoration(
-                labelText: 'Master Password',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.masterPasswordLabel,
+                border: const OutlineInputBorder(),
               ),
               onSubmitted: (_) => _busy ? null : _unlock(),
             ),
@@ -73,7 +76,7 @@ class _UnlockScreenState extends State<UnlockScreen> {
                         height: 18,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Unlock'),
+                    : Text(l10n.unlockButton),
               ),
             ),
           ],

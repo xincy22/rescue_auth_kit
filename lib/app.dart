@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
 import 'core/vault/vault_repository.dart';
@@ -6,6 +7,7 @@ import 'core/vault/vault_session.dart';
 import 'features/auth/create_vault_screen.dart';
 import 'features/auth/unlock_screen.dart';
 import 'features/home/home_shell.dart';
+import 'l10n/app_localizations.dart';
 
 class RescueAuthKitApp extends StatelessWidget {
   const RescueAuthKitApp({super.key, required this.vaultRepository});
@@ -22,8 +24,18 @@ class RescueAuthKitApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'RescueAuthKit',
         theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.indigo),
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en'),
+          Locale('zh'),
+        ],
+        onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
         home: const RootGate(),
       ),
     );

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../core/import/otpauth_parser.dart';
 import '../../core/vault/vault_models.dart';
 import '../../core/vault/vault_session.dart';
+import '../../l10n/app_localizations.dart';
 
 class ConfirmImportScreen extends StatefulWidget {
   const ConfirmImportScreen({super.key, required this.otpauthUri});
@@ -47,6 +48,7 @@ class _ConfirmImportScreenState extends State<ConfirmImportScreen> {
   }
 
   Future<void> _save() async {
+    final l10n = AppLocalizations.of(context);
     final parsed = _parsed;
     if (parsed == null) return;
 
@@ -67,10 +69,10 @@ class _ConfirmImportScreenState extends State<ConfirmImportScreen> {
       if (!mounted) return;
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('TOTP entry imported successfully.')),
+        SnackBar(content: Text(l10n.importSaved)),
       );
     } catch (e) {
-      setState(() => _error = 'Failed to save TOTP entry: $e');
+      setState(() => _error = l10n.importSaveFailed(e.toString()));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -78,43 +80,44 @@ class _ConfirmImportScreenState extends State<ConfirmImportScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final parsed = _parsed;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Confirm Import')),
+      appBar: AppBar(title: Text(l10n.confirmImportTitle)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: parsed == null
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Parsing Error: ${_error ?? "Unknown error"}'),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Hint: currently only otpauth://totp/ URIs are supported.',
+                  Text(
+                    l10n.confirmImportParseError(_error ?? ''),
                   ),
+                  const SizedBox(height: 12),
+                  Text(l10n.confirmImportHint),
                 ],
               )
             : Column(
                 children: [
                   TextField(
                     controller: _issuerCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Issuer',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.issuerLabel,
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 12),
                   TextField(
                     controller: _accountCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Account Name',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.accountLabel,
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 12),
                   ListTile(
-                    title: const Text('Algorithm / Digits / Period'),
+                    title: Text(l10n.algoDigitsPeriod),
                     subtitle: Text(
                       '${parsed.algorithm.otpauthName} / ${parsed.digits} / ${parsed.period}s',
                     ),
@@ -137,7 +140,7 @@ class _ConfirmImportScreenState extends State<ConfirmImportScreen> {
                               height: 18,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
-                          : const Text('Save to Vault'),
+                          : Text(l10n.saveToVault),
                     ),
                   ),
                 ],

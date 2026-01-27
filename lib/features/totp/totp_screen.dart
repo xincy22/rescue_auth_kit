@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/vault/vault_models.dart';
 import '../../core/vault/vault_session.dart';
+import '../../l10n/app_localizations.dart';
 
 class TotpScreen extends StatefulWidget {
   const TotpScreen({super.key});
@@ -47,6 +48,7 @@ class _TotpScreenState extends State<TotpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final session = context.watch<VaultSession>();
     final entries = session.data.totpEntries;
 
@@ -54,7 +56,7 @@ class _TotpScreenState extends State<TotpScreen> {
     final epochSeconds = now.millisecondsSinceEpoch ~/ 1000;
 
     if (entries.isEmpty) {
-      return const Center(child: Text('No TOTP entries available.'));
+      return Center(child: Text(l10n.totpEmpty));
     }
 
     return ListView.separated(
@@ -89,7 +91,7 @@ class _TotpScreenState extends State<TotpScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  e.issuer.isEmpty ? '(No issuer)' : e.issuer,
+                  e.issuer.isEmpty ? l10n.totpNoIssuer : e.issuer,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 Text(
@@ -105,14 +107,12 @@ class _TotpScreenState extends State<TotpScreen> {
                     ),
                     const Spacer(),
                     IconButton(
-                      tooltip: 'Copy',
+                      tooltip: l10n.copied,
                       onPressed: () async {
                         await Clipboard.setData(ClipboardData(text: code));
                         if (!context.mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('TOTP code copied to clipboard'),
-                          ),
+                          SnackBar(content: Text(l10n.totpCopied)),
                         );
                       },
                       icon: const Icon(Icons.copy),
@@ -122,7 +122,7 @@ class _TotpScreenState extends State<TotpScreen> {
                 const SizedBox(height: 6),
                 LinearProgressIndicator(value: progress),
                 const SizedBox(height: 6),
-                Text('Expires in $remaining seconds'),
+                Text(l10n.totpExpiresIn(remaining)),
               ],
             ),
           ),

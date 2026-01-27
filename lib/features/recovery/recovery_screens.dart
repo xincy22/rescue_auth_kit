@@ -3,17 +3,19 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/vault/vault_session.dart';
+import '../../l10n/app_localizations.dart';
 
 class RecoveryScreen extends StatelessWidget {
   const RecoveryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final session = context.watch<VaultSession>();
     final sets = session.data.recoveryCodeSets;
 
     if (sets.isEmpty) {
-      return const Center(child: Text('No recovery codes yet. Tap + to add.'));
+      return Center(child: Text(l10n.recoveryEmpty));
     }
 
     return ListView.separated(
@@ -21,33 +23,34 @@ class RecoveryScreen extends StatelessWidget {
       itemCount: sets.length,
       separatorBuilder: (context, index) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
+        final l10n = AppLocalizations.of(context);
         final s = sets[index];
         return Card(
           child: ListTile(
-            title: Text(s.title.isEmpty ? '(No title)' : s.title),
-            subtitle: Text('${s.codes.length} codes'),
+            title: Text(s.title.isEmpty ? l10n.recoveryNoTitle : s.title),
+            subtitle: Text(l10n.recoveryCodesCount(s.codes.length)),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (_) => RecoveryDetailScreen(setId: s.id),
               ),
             ),
             trailing: IconButton(
-              tooltip: 'Delete',
+              tooltip: l10n.deleteButton,
               icon: const Icon(Icons.delete_outline),
               onPressed: () async {
                 final ok = await showDialog<bool>(
                   context: context,
                   builder: (ctx) => AlertDialog(
-                    title: const Text('Delete this recovery set?'),
-                    content: Text(s.title.isEmpty ? '(No title)' : s.title),
+                    title: Text(l10n.recoveryDeleteTitle),
+                    content: Text(s.title.isEmpty ? l10n.recoveryNoTitle : s.title),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(ctx, false),
-                        child: const Text('Cancel'),
+                        child: Text(l10n.dialogCancel),
                       ),
                       FilledButton(
                         onPressed: () => Navigator.pop(ctx, true),
-                        child: const Text('Delete'),
+                        child: Text(l10n.deleteButton),
                       ),
                     ],
                   ),
@@ -72,15 +75,16 @@ class RecoveryDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final session = context.watch<VaultSession>();
     final set = session.data.recoveryCodeSets.firstWhere((e) => e.id == setId);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(set.title.isEmpty ? '(No title)' : set.title),
+        title: Text(set.title.isEmpty ? l10n.recoveryNoTitle : set.title),
         actions: [
           IconButton(
-            tooltip: 'Copy all',
+            tooltip: l10n.copyAllTooltip,
             icon: const Icon(Icons.copy),
             onPressed: () async {
               final all = set.codes.join('\n');
@@ -88,7 +92,7 @@ class RecoveryDetailScreen extends StatelessWidget {
               if (!context.mounted) return;
               ScaffoldMessenger.of(
                 context,
-              ).showSnackBar(const SnackBar(content: Text('Copied')));
+              ).showSnackBar(SnackBar(content: Text(l10n.copied)));
             },
           ),
         ],
@@ -102,14 +106,14 @@ class RecoveryDetailScreen extends StatelessWidget {
           return ListTile(
             title: Text(code),
             trailing: IconButton(
-              tooltip: 'Copy',
+              tooltip: l10n.copied,
               icon: const Icon(Icons.copy),
               onPressed: () async {
                 await Clipboard.setData(ClipboardData(text: code));
                 if (!context.mounted) return;
                 ScaffoldMessenger.of(
                   context,
-                ).showSnackBar(const SnackBar(content: Text('Copied')));
+                ).showSnackBar(SnackBar(content: Text(l10n.copied)));
               },
             ),
           );
@@ -141,6 +145,7 @@ class _AddRecoveryScreenState extends State<AddRecoveryScreen> {
   }
 
   Future<void> _save() async {
+    final l10n = AppLocalizations.of(context);
     setState(() {
       _saving = true;
       _error = null;
@@ -156,7 +161,7 @@ class _AddRecoveryScreenState extends State<AddRecoveryScreen> {
     if (codes.isEmpty) {
       setState(() {
         _saving = false;
-        _error = 'Please enter at least one code.';
+        _error = l10n.recoveryNeedOne;
       });
       return;
     }
@@ -170,9 +175,9 @@ class _AddRecoveryScreenState extends State<AddRecoveryScreen> {
       Navigator.of(context).pop();
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Recovery codes saved')));
+      ).showSnackBar(SnackBar(content: Text(l10n.recoverySaved)));
     } catch (e) {
-      setState(() => _error = 'Save failed: $e');
+      setState(() => _error = l10n.recoverySaveFailed(e.toString()));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -180,17 +185,18 @@ class _AddRecoveryScreenState extends State<AddRecoveryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Recovery Codes')),
+      appBar: AppBar(title: Text(l10n.addRecoveryTitle)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             TextField(
               controller: _titleCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Title (optional)',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.titleOptionalLabel,
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),
@@ -198,9 +204,9 @@ class _AddRecoveryScreenState extends State<AddRecoveryScreen> {
               controller: _codesCtrl,
               minLines: 6,
               maxLines: 12,
-              decoration: const InputDecoration(
-                labelText: 'Recovery Codes (one per line)',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.recoveryCodesLabel,
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),
@@ -220,7 +226,7 @@ class _AddRecoveryScreenState extends State<AddRecoveryScreen> {
                         height: 18,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Save'),
+                    : Text(l10n.saveToVault),
               ),
             ),
           ],

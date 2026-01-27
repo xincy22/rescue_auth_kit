@@ -10,6 +10,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../core/vault/vault_repository.dart';
 import '../../core/vault/vault_session.dart';
+import '../../l10n/app_localizations.dart';
 
 class BackupScreen extends StatelessWidget {
   const BackupScreen({super.key});
@@ -33,6 +34,7 @@ class BackupScreen extends StatelessWidget {
     BuildContext context, {
     required String title,
   }) async {
+    final l10n = AppLocalizations.of(context);
     final ctrl = TextEditingController();
     final result = await showDialog<String?>(
       context: context,
@@ -41,19 +43,19 @@ class BackupScreen extends StatelessWidget {
         content: TextField(
           controller: ctrl,
           obscureText: true,
-          decoration: const InputDecoration(
-            labelText: 'Password',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            labelText: l10n.masterPasswordLabel,
+            border: const OutlineInputBorder(),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(l10n.dialogCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, ctrl.text),
-            child: const Text('Confirm'),
+            child: Text(l10n.dialogContinue),
           ),
         ],
       ),
@@ -64,6 +66,7 @@ class BackupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final repo = context.read<VaultRepository>();
 
     return Padding(
@@ -72,7 +75,7 @@ class BackupScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Current Vault path: ',
+            l10n.backupCurrentPath,
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
@@ -83,7 +86,7 @@ class BackupScreen extends StatelessWidget {
               Expanded(
                 child: FilledButton.icon(
                   icon: const Icon(Icons.upload),
-                  label: const Text('Export Vault'),
+                  label: Text(l10n.backupExport),
                   onPressed: () async {
                     try {
                       final bytes = await repo.exportBytes();
@@ -107,11 +110,7 @@ class BackupScreen extends StatelessWidget {
 
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'File has been generated and shared',
-                              ),
-                            ),
+                            SnackBar(content: Text(l10n.backupExportShared)),
                           );
                         }
                       } else {
@@ -130,7 +129,7 @@ class BackupScreen extends StatelessWidget {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Vault exported to ${loc.path}'),
+                              content: Text(l10n.backupExportedTo(loc.path)),
                             ),
                           );
                         }
@@ -138,7 +137,9 @@ class BackupScreen extends StatelessWidget {
                     } catch (e) {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Error exporting vault: $e')),
+                          SnackBar(
+                            content: Text(l10n.backupExportFailed(e.toString())),
+                          ),
                         );
                       }
                     }
@@ -149,7 +150,7 @@ class BackupScreen extends StatelessWidget {
               Expanded(
                 child: OutlinedButton.icon(
                   icon: const Icon(Icons.download),
-                  label: const Text('Import Vault'),
+                  label: Text(l10n.backupImport),
                   onPressed: () async {
                     try {
                       final file = await openFile(
@@ -162,20 +163,16 @@ class BackupScreen extends StatelessWidget {
                       final ok = await showDialog<bool>(
                         context: context,
                         builder: (ctx) => AlertDialog(
-                          title: const Text(
-                            'Import vault will replace the current vault',
-                          ),
-                          content: const Text(
-                            'Sure you want to continue? (It is recommended that you export the current backup first)',
-                          ),
+                          title: Text(l10n.backupImportReplaceTitle),
+                          content: Text(l10n.backupImportReplaceBody),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(ctx, false),
-                              child: const Text('Cancel'),
+                              child: Text(l10n.dialogCancel),
                             ),
                             FilledButton(
                               onPressed: () => Navigator.pop(ctx, true),
-                              child: const Text('Continue'),
+                              child: Text(l10n.dialogContinue),
                             ),
                           ],
                         ),
@@ -186,7 +183,7 @@ class BackupScreen extends StatelessWidget {
 
                       final pw = await _askPassword(
                         context,
-                        title: 'Please enter the vault`s password',
+                        title: l10n.backupPasswordTitle,
                       );
                       if (pw == null || pw.isEmpty) return;
 
@@ -204,20 +201,22 @@ class BackupScreen extends StatelessWidget {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Vault imported from ${file.name}'),
+                            content: Text(l10n.backupImportedFrom(file.name)),
                           ),
                         );
                       }
                     } on VaultAuthException {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('密码错误（或备份文件损坏）')),
+                          SnackBar(content: Text(l10n.backupWrongPassword)),
                         );
                       }
                     } catch (e) {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Error importing vault: $e')),
+                          SnackBar(
+                            content: Text(l10n.backupImportFailed(e.toString())),
+                          ),
                         );
                       }
                     }
@@ -226,6 +225,8 @@ class BackupScreen extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 16),
+          Text(l10n.backupChecklist),
         ],
       ),
     );
