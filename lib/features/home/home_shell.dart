@@ -8,6 +8,7 @@ import '../scan/confirm_import_screen.dart';
 import '../scan/paste_uri_dialog.dart';
 import '../scan/scan_screen.dart';
 import '../totp/totp_screen.dart';
+import '../backup/backup_screen.dart';
 
 enum _AddTotpAction { scan, paste }
 
@@ -23,11 +24,7 @@ class _HomeShellState extends State<HomeShell> {
 
   @override
   Widget build(BuildContext context) {
-    final pages = const [
-      TotpScreen(),
-      RecoveryScreen(),
-      Center(child: Text('Backup')),
-    ];
+    final pages = const [TotpScreen(), RecoveryScreen(), BackupScreen()];
 
     final titles = const ['TOTP', 'Recovery', 'Backup'];
 

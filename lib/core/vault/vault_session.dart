@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
@@ -88,6 +89,15 @@ class VaultSession extends ChangeNotifier {
 
     _handle = h.copyWith(data: updated);
     await _repo.save(_handle!);
+    notifyListeners();
+  }
+
+  Future<void> importVault({
+    required Uint8List vaultBytes,
+    required String password,
+  }) async {
+    _handle = await _repo.importBytes(bytes: vaultBytes, password: password);
+    _status = VaultSessionStatus.unlocked;
     notifyListeners();
   }
 
