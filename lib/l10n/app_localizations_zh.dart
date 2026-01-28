@@ -9,7 +9,7 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get appTitle => 'RescueAuthKit';
+  String get appTitle => '拾遗安全屋';
 
   @override
   String get vaultLockedTitle => 'Vault 已锁定';
