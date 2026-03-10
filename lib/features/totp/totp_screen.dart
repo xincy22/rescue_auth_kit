@@ -90,13 +90,53 @@ class _TotpScreenState extends State<TotpScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  e.issuer.isEmpty ? l10n.totpNoIssuer : e.issuer,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                Text(
-                  e.accountName,
-                  style: Theme.of(context).textTheme.bodyMedium,
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            e.issuer.isEmpty ? l10n.totpNoIssuer : e.issuer,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          Text(
+                            e.accountName,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: l10n.deleteButton,
+                      icon: const Icon(Icons.delete_outline),
+                      onPressed: () async {
+                        final ok = await showDialog<bool>(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: Text(l10n.totpDeleteTitle),
+                            content: Text(
+                              e.issuer.isEmpty ? l10n.totpNoIssuer : e.issuer,
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx, false),
+                                child: Text(l10n.dialogCancel),
+                              ),
+                              FilledButton(
+                                onPressed: () => Navigator.pop(ctx, true),
+                                child: Text(l10n.deleteButton),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (!context.mounted) return;
+                        if (ok == true) {
+                          await context.read<VaultSession>().removeTotpEntry(e.id);
+                        }
+                      },
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 10),
                 Row(

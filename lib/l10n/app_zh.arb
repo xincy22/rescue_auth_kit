@@ -21,6 +21,7 @@
   "totpCopied": "已复制验证码",
   "totpExpiresIn": "剩余 {seconds} 秒",
   "totpNoIssuer": "（无发行方）",
+  "totpDeleteTitle": "删除此 TOTP 条目？",
   "addTotpSheetScan": "扫码导入",
   "addTotpSheetPaste": "粘贴 otpauth URI",
   "pasteDialogTitle": "粘贴 otpauth URI",

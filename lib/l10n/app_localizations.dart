@@ -230,6 +230,12 @@ abstract class AppLocalizations {
   /// **'(No issuer)'**
   String get totpNoIssuer;
 
+  /// No description provided for @totpDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this TOTP entry?'**
+  String get totpDeleteTitle;
+
   /// No description provided for @addTotpSheetScan.
   ///
   /// In en, this message translates to:

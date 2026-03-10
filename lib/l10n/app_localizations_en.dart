@@ -83,6 +83,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get totpNoIssuer => '(No issuer)';
 
   @override
+  String get totpDeleteTitle => 'Delete this TOTP entry?';
+
+  @override
   String get addTotpSheetScan => 'Scan QR';
 
   @override

@@ -81,6 +81,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get totpNoIssuer => '（无发行方）';
 
   @override
+  String get totpDeleteTitle => '删除此 TOTP 条目？';
+
+  @override
   String get addTotpSheetScan => '扫码导入';
 
   @override

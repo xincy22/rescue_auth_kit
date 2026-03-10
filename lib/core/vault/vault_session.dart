@@ -91,6 +91,21 @@ class VaultSession extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> removeTotpEntry(String id) async {
+    final h = _handle;
+    if (h == null) throw const VaultLockedException();
+
+    final updated = h.data.copyWith(
+      totpEntries: h.data.totpEntries
+          .where((e) => e.id != id)
+          .toList(growable: false),
+    );
+
+    _handle = h.copyWith(data: updated);
+    await _repo.save(_handle!);
+    notifyListeners();
+  }
+
   Future<void> importVault({
     required Uint8List vaultBytes,
     required String password,

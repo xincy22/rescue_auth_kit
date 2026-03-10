@@ -21,6 +21,7 @@
   "totpCopied": "TOTP code copied",
   "totpExpiresIn": "Expires in {seconds} seconds",
   "totpNoIssuer": "(No issuer)",
+  "totpDeleteTitle": "Delete this TOTP entry?",
   "addTotpSheetScan": "Scan QR",
   "addTotpSheetPaste": "Paste otpauth URI",
   "pasteDialogTitle": "Paste otpauth URI",
