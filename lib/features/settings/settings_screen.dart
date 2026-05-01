@@ -23,11 +23,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  final UpdateChecker _updateChecker = const UpdateChecker();
-
   late final Future<PackageInfo?> _packageInfoFuture;
-  bool _checkingForUpdates = false;
-  UpdateCheckResult? _lastUpdateCheck;
 
   @override
   void initState() {
@@ -170,7 +166,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildVersionSection(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final lastResult = _lastUpdateCheck;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,167 +176,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         const SizedBox(height: 8),
         Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 2),
-                      child: Icon(Icons.info_outline),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            l10n.settingsVersionTitle,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          const SizedBox(height: 4),
-                          FutureBuilder<PackageInfo?>(
-                            future: _packageInfoFuture,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return Text(l10n.settingsLoadingVersion);
-                              }
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 12,
+            ),
+            leading: const Icon(Icons.info_outline),
+            title: Text(l10n.settingsVersionTitle),
+            subtitle: FutureBuilder<PackageInfo?>(
+              future: _packageInfoFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text(l10n.settingsLoadingVersion);
+                }
 
-                              final packageInfo = snapshot.data;
-                              final version = packageInfo == null
-                                  ? l10n.settingsUnknownVersion
-                                  : '${packageInfo.version}+${packageInfo.buildNumber}';
+                final packageInfo = snapshot.data;
+                final version = packageInfo == null
+                    ? l10n.settingsUnknownVersion
+                    : '${packageInfo.version}+${packageInfo.buildNumber}';
 
-                              return Text(l10n.settingsAppVersion(version));
-                            },
-                          ),
-                          const SizedBox(height: 4),
-                          Text(l10n.settingsVersionSubtitle),
-                          if (lastResult != null) ...[
-                            const SizedBox(height: 8),
-                            Text(
-                              _updateSummary(l10n, lastResult),
-                              style: Theme.of(context).textTheme.bodyMedium
-                                  ?.copyWith(
-                                    color: lastResult.updateAvailable
-                                        ? Theme.of(context).colorScheme.primary
-                                        : null,
-                                  ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    FilledButton.icon(
-                      icon: _checkingForUpdates
-                          ? const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Icon(Icons.system_update),
-                      label: Text(
-                        _checkingForUpdates
-                            ? l10n.settingsCheckingUpdates
-                            : l10n.settingsCheckUpdates,
-                      ),
-                      onPressed: _checkingForUpdates
-                          ? null
-                          : () => _checkForUpdates(context),
-                    ),
-                    if (lastResult?.releaseUrl != null)
-                      OutlinedButton.icon(
-                        icon: const Icon(Icons.open_in_new),
-                        label: Text(l10n.settingsOpenRelease),
-                        onPressed: () =>
-                            _openRelease(context, lastResult!.releaseUrl!),
-                      ),
-                  ],
-                ),
-              ],
+                return Text(l10n.settingsAppVersion(version));
+              },
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const VersionInfoScreen()),
             ),
           ),
         ),
       ],
     );
-  }
-
-  String _updateSummary(AppLocalizations l10n, UpdateCheckResult result) {
-    switch (result.status) {
-      case UpdateCheckStatus.updateAvailable:
-        return l10n.settingsUpdateAvailable(result.latestTag ?? '');
-      case UpdateCheckStatus.upToDate:
-        return l10n.settingsNoUpdate(result.latestTag ?? result.currentVersion);
-      case UpdateCheckStatus.noReleaseFound:
-        return l10n.settingsNoReleaseFound;
-      case UpdateCheckStatus.cannotCompare:
-        return l10n.settingsUpdateCompareFailed(result.latestTag ?? '');
-    }
-  }
-
-  Future<void> _checkForUpdates(BuildContext context) async {
-    setState(() => _checkingForUpdates = true);
-
-    try {
-      final result = await _updateChecker.check();
-      if (!context.mounted) return;
-
-      setState(() => _lastUpdateCheck = result);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(_updateSummary(AppLocalizations.of(context), result)),
-          action: result.releaseUrl == null
-              ? null
-              : SnackBarAction(
-                  label: AppLocalizations.of(context).settingsOpenRelease,
-                  onPressed: () => _openRelease(context, result.releaseUrl!),
-                ),
-        ),
-      );
-    } catch (e) {
-      if (!context.mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(
-              context,
-            ).settingsUpdateCheckFailed(e.toString()),
-          ),
-        ),
-      );
-    } finally {
-      if (mounted) {
-        setState(() => _checkingForUpdates = false);
-      }
-    }
-  }
-
-  Future<void> _openRelease(BuildContext context, String url) async {
-    final ok = await launchUrl(
-      Uri.parse(url),
-      mode: LaunchMode.externalApplication,
-    );
-    if (!ok && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context).settingsUpdateCheckFailed(url),
-          ),
-        ),
-      );
-    }
   }
 
   Future<void> _exportVault(BuildContext context, VaultRepository repo) async {
@@ -455,6 +319,205 @@ class _SettingsScreenState extends State<SettingsScreen> {
           SnackBar(content: Text(l10n.backupImportFailed(e.toString()))),
         );
       }
+    }
+  }
+}
+
+class VersionInfoScreen extends StatefulWidget {
+  const VersionInfoScreen({super.key});
+
+  @override
+  State<VersionInfoScreen> createState() => _VersionInfoScreenState();
+}
+
+class _VersionInfoScreenState extends State<VersionInfoScreen> {
+  final UpdateChecker _updateChecker = const UpdateChecker();
+
+  late final Future<PackageInfo?> _packageInfoFuture;
+  bool _checkingForUpdates = false;
+  UpdateCheckResult? _lastUpdateCheck;
+
+  @override
+  void initState() {
+    super.initState();
+    _packageInfoFuture = _loadPackageInfo();
+  }
+
+  Future<PackageInfo?> _loadPackageInfo() async {
+    try {
+      return await PackageInfo.fromPlatform();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    return Scaffold(
+      appBar: AppBar(title: Text(l10n.settingsVersionTitle)),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Card(
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
+              leading: const Icon(Icons.info_outline),
+              title: Text(l10n.settingsVersionTitle),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 4),
+                  FutureBuilder<PackageInfo?>(
+                    future: _packageInfoFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Text(l10n.settingsLoadingVersion);
+                      }
+
+                      final packageInfo = snapshot.data;
+                      final version = packageInfo == null
+                          ? l10n.settingsUnknownVersion
+                          : '${packageInfo.version}+${packageInfo.buildNumber}';
+
+                      return Text(l10n.settingsAppVersion(version));
+                    },
+                  ),
+                  const SizedBox(height: 4),
+                  Text(l10n.settingsVersionSubtitle),
+                ],
+              ),
+            ),
+          ),
+          if (_lastUpdateCheck != null) ...[
+            const SizedBox(height: 16),
+            _buildReleaseCard(context, _lastUpdateCheck!),
+          ],
+        ],
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+          child: Center(
+            widthFactor: 1,
+            heightFactor: 1,
+            child: FilledButton.icon(
+              icon: _checkingForUpdates
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.system_update),
+              label: Text(
+                _checkingForUpdates
+                    ? l10n.settingsCheckingUpdates
+                    : l10n.settingsCheckUpdates,
+              ),
+              onPressed: _checkingForUpdates
+                  ? null
+                  : () => _checkForUpdates(context),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReleaseCard(BuildContext context, UpdateCheckResult result) {
+    final l10n = AppLocalizations.of(context);
+    final releaseUrl = result.releaseUrl;
+    final releaseLabel = result.releaseName?.trim().isNotEmpty == true
+        ? result.releaseName!
+        : result.latestTag;
+
+    return Card(
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
+        leading: Icon(
+          result.updateAvailable ? Icons.system_update_alt : Icons.check_circle,
+        ),
+        title: Text(_updateSummary(l10n, result)),
+        subtitle: releaseLabel == null ? null : Text(releaseLabel),
+        trailing: releaseUrl == null ? null : const Icon(Icons.open_in_new),
+        onTap: releaseUrl == null
+            ? null
+            : () => _openRelease(context, releaseUrl),
+      ),
+    );
+  }
+
+  String _updateSummary(AppLocalizations l10n, UpdateCheckResult result) {
+    switch (result.status) {
+      case UpdateCheckStatus.updateAvailable:
+        return l10n.settingsUpdateAvailable(result.latestTag ?? '');
+      case UpdateCheckStatus.upToDate:
+        return l10n.settingsNoUpdate(result.latestTag ?? result.currentVersion);
+      case UpdateCheckStatus.noReleaseFound:
+        return l10n.settingsNoReleaseFound;
+      case UpdateCheckStatus.cannotCompare:
+        return l10n.settingsUpdateCompareFailed(result.latestTag ?? '');
+    }
+  }
+
+  Future<void> _checkForUpdates(BuildContext context) async {
+    setState(() => _checkingForUpdates = true);
+
+    try {
+      final result = await _updateChecker.check();
+      if (!context.mounted) return;
+
+      setState(() => _lastUpdateCheck = result);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_updateSummary(AppLocalizations.of(context), result)),
+          action: result.releaseUrl == null
+              ? null
+              : SnackBarAction(
+                  label: AppLocalizations.of(context).settingsOpenRelease,
+                  onPressed: () => _openRelease(context, result.releaseUrl!),
+                ),
+        ),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(
+              context,
+            ).settingsUpdateCheckFailed(e.toString()),
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _checkingForUpdates = false);
+      }
+    }
+  }
+
+  Future<void> _openRelease(BuildContext context, String url) async {
+    final ok = await launchUrl(
+      Uri.parse(url),
+      mode: LaunchMode.externalApplication,
+    );
+    if (!ok && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).settingsUpdateCheckFailed(url),
+          ),
+        ),
+      );
     }
   }
 }
