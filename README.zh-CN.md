@@ -59,7 +59,7 @@ flutter run -d <device-id>
 
 1. 在设备 A 创建并解锁 Vault
 2. 导入一些 TOTP / Recovery Codes
-3. 在 Backup 页导出
+3. 在设置页导出
 4. 在设备 B 用同一主密码导入该 Vault 文件
 5. 验证两端生成的 TOTP 一致
 
@@ -67,4 +67,3 @@ flutter run -d <device-id>
 
 - MVP 不支持 `otpauth-migration://`
 - 忘记主密码就无法解密 Vault
-

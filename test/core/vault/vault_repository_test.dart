@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
+import 'package:rescue_auth_kit/core/crypto/vault_crypto.dart';
 import 'package:rescue_auth_kit/core/vault/vault_models.dart';
 import 'package:rescue_auth_kit/core/vault/vault_repository.dart';
 
@@ -108,4 +110,83 @@ void main() {
       await dir2.delete(recursive: true);
     }
   });
+
+  test(
+    'open silently upgrades schema v1 vault file to current schema',
+    () async {
+      final dir = await Directory.systemTemp.createTemp(
+        'rak_vault_test_legacy_',
+      );
+
+      try {
+        final vaultPath = p.join(dir.path, 'vault.rakvault');
+        const password = 'testpassword';
+        await _writeLegacySchema1Vault(
+          vaultPath: vaultPath,
+          password: password,
+        );
+        final beforeBytes = await File(vaultPath).readAsBytes();
+
+        final repo = VaultRepository.forPath(vaultFilePath: vaultPath);
+        final opened = await repo.open(password: password);
+        final afterBytes = await File(vaultPath).readAsBytes();
+
+        expect(opened.data.schemaVersion, vaultDataSchemaVersion);
+        expect(opened.data.developerSettings.enabled, isFalse);
+        expect(opened.data.developerEntries, isEmpty);
+        expect(afterBytes, isNot(beforeBytes));
+
+        final rawPayload = await _decryptVaultPayload(
+          bytes: Uint8List.fromList(afterBytes),
+          password: password,
+        );
+        expect(rawPayload['schemaVersion'], vaultDataSchemaVersion);
+        expect(rawPayload['developerSettings'], {'enabled': false});
+        expect(rawPayload['developerEntries'], isEmpty);
+      } finally {
+        await dir.delete(recursive: true);
+      }
+    },
+  );
+}
+
+Future<void> _writeLegacySchema1Vault({
+  required String vaultPath,
+  required String password,
+}) async {
+  final crypto = VaultCrypto();
+  final salt = crypto.newSalt();
+  final kdf = VaultKdfParams.forTesting(salt: salt);
+  final key = await crypto.deriveKeyFromPassword(
+    password: password,
+    params: kdf,
+  );
+  final legacyJson = jsonEncode({
+    'schemaVersion': 1,
+    'totpEntries': const [],
+    'recoveryCodeSets': const [],
+  });
+  final vaultFile = await crypto.encryptToFile(
+    cleartextJsonBytes: Uint8List.fromList(utf8.encode(legacyJson)),
+    key: key,
+    kdfParams: kdf,
+  );
+
+  final file = File(vaultPath);
+  await file.parent.create(recursive: true);
+  await file.writeAsBytes(vaultFile.encode(), flush: true);
+}
+
+Future<Map<String, dynamic>> _decryptVaultPayload({
+  required Uint8List bytes,
+  required String password,
+}) async {
+  final crypto = VaultCrypto();
+  final vaultFile = VaultFile.decode(bytes);
+  final key = await crypto.deriveKeyFromPassword(
+    password: password,
+    params: vaultFile.kdf,
+  );
+  final clearBytes = await crypto.decryptFile(file: vaultFile, key: key);
+  return jsonDecode(utf8.decode(clearBytes)) as Map<String, dynamic>;
 }

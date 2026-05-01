@@ -4,14 +4,17 @@ import 'package:provider/provider.dart';
 
 import '../../core/vault/vault_session.dart';
 import '../../l10n/app_localizations.dart';
-import '../backup/backup_screen.dart';
+import '../developer/developer_screen.dart';
 import '../recovery/recovery_screens.dart';
 import '../scan/confirm_import_screen.dart';
 import '../scan/paste_uri_dialog.dart';
 import '../scan/scan_screen.dart';
+import '../settings/settings_screen.dart';
 import '../totp/totp_screen.dart';
 
 enum _AddTotpAction { scan, paste }
+
+enum _HomeDestination { totp, recovery, developer, settings }
 
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key});
@@ -21,18 +24,62 @@ class HomeShell extends StatefulWidget {
 }
 
 class _HomeShellState extends State<HomeShell> {
-  int _index = 0;
+  _HomeDestination _selected = _HomeDestination.totp;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final pages = const [TotpScreen(), RecoveryScreen(), BackupScreen()];
-
-    final titles = [l10n.tabTotp, l10n.tabRecovery, l10n.tabBackup];
+    final developerEnabled = context
+        .watch<VaultSession>()
+        .data
+        .developerSettings
+        .enabled;
+    final destinations =
+        <
+          ({
+            _HomeDestination destination,
+            IconData icon,
+            String label,
+            Widget page,
+          })
+        >[
+          (
+            destination: _HomeDestination.totp,
+            icon: Icons.shield,
+            label: l10n.tabTotp,
+            page: const TotpScreen(),
+          ),
+          (
+            destination: _HomeDestination.recovery,
+            icon: Icons.key,
+            label: l10n.tabRecovery,
+            page: const RecoveryScreen(),
+          ),
+          if (developerEnabled)
+            (
+              destination: _HomeDestination.developer,
+              icon: Icons.code,
+              label: l10n.tabDeveloper,
+              page: const DeveloperScreen(),
+            ),
+          (
+            destination: _HomeDestination.settings,
+            icon: Icons.settings,
+            label: l10n.tabSettings,
+            page: const SettingsScreen(),
+          ),
+        ];
+    final selectedDestination =
+        destinations.any((item) => item.destination == _selected)
+        ? _selected
+        : _HomeDestination.settings;
+    final selectedIndex = destinations.indexWhere(
+      (item) => item.destination == selectedDestination,
+    );
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(titles[_index]),
+        title: Text(destinations[selectedIndex].label),
         actions: [
           IconButton(
             tooltip: l10n.lockTooltip,
@@ -41,35 +88,45 @@ class _HomeShellState extends State<HomeShell> {
           ),
         ],
       ),
-      body: IndexedStack(index: _index, children: pages),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _index,
-        onDestinationSelected: (index) => setState(() => _index = index),
-        destinations: [
-          NavigationDestination(icon: const Icon(Icons.shield), label: l10n.tabTotp),
-          NavigationDestination(icon: const Icon(Icons.key), label: l10n.tabRecovery),
-          NavigationDestination(
-            icon: const Icon(Icons.import_export),
-            label: l10n.tabBackup,
-          ),
-        ],
+      body: IndexedStack(
+        index: selectedIndex,
+        children: destinations.map((item) => item.page).toList(),
       ),
-      floatingActionButton: _buildFab(context),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: selectedIndex,
+        onDestinationSelected: (index) =>
+            setState(() => _selected = destinations[index].destination),
+        destinations: destinations
+            .map(
+              (item) => NavigationDestination(
+                icon: Icon(item.icon),
+                label: item.label,
+              ),
+            )
+            .toList(),
+      ),
+      floatingActionButton: _buildFab(context, selectedDestination),
     );
   }
 
-  Widget? _buildFab(BuildContext context) {
-    if (_index == 0) {
+  Widget? _buildFab(BuildContext context, _HomeDestination destination) {
+    if (destination == _HomeDestination.totp) {
       return FloatingActionButton(
         onPressed: _addTotp,
         child: const Icon(Icons.add),
       );
     }
-    if (_index == 1) {
+    if (destination == _HomeDestination.recovery) {
       return FloatingActionButton(
         onPressed: () => Navigator.of(
           context,
         ).push(MaterialPageRoute(builder: (_) => const AddRecoveryScreen())),
+        child: const Icon(Icons.add),
+      );
+    }
+    if (destination == _HomeDestination.developer) {
+      return FloatingActionButton(
+        onPressed: () => showAddDeveloperEntrySheet(context),
         child: const Icon(Icons.add),
       );
     }
@@ -109,9 +166,9 @@ class _HomeShellState extends State<HomeShell> {
 
     if (action == _AddTotpAction.scan) {
       if (!mounted) return;
-      uriText = await Navigator.of(context).push<String?>(
-        MaterialPageRoute(builder: (_) => const ScanScreen()),
-      );
+      uriText = await Navigator.of(
+        context,
+      ).push<String?>(MaterialPageRoute(builder: (_) => const ScanScreen()));
     } else {
       if (!mounted) return;
       uriText = await showPasteOtpauthDialog(context);

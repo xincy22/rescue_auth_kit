@@ -67,6 +67,78 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tabBackup => '备份';
 
   @override
+  String get tabDeveloper => '开发者';
+
+  @override
+  String get tabSettings => '设置';
+
+  @override
+  String get settingsVaultSection => 'Vault 备份';
+
+  @override
+  String get settingsFeaturesSection => '功能';
+
+  @override
+  String get settingsDeveloperBackupTitle => '开发者备份';
+
+  @override
+  String get settingsDeveloperBackupSubtitle =>
+      '把 Android 签名密钥、API Key、SSH Key、环境变量和其他开发者密钥保存到加密 Vault。';
+
+  @override
+  String get settingsVersionSection => '版本';
+
+  @override
+  String get settingsVersionTitle => '版本说明';
+
+  @override
+  String get settingsVersionSubtitle =>
+      '从 GitHub Releases 检查 RescueAuthKit 是否有新版本。';
+
+  @override
+  String get settingsLoadingVersion => '正在读取版本...';
+
+  @override
+  String get settingsUnknownVersion => '未知版本';
+
+  @override
+  String settingsAppVersion(Object version) {
+    return '当前版本：$version';
+  }
+
+  @override
+  String get settingsCheckUpdates => '检查更新';
+
+  @override
+  String get settingsCheckingUpdates => '正在检查...';
+
+  @override
+  String get settingsOpenRelease => '打开发布页';
+
+  @override
+  String settingsUpdateAvailable(Object version) {
+    return '发现新版本：$version';
+  }
+
+  @override
+  String settingsNoUpdate(Object version) {
+    return '已是最新版本：$version';
+  }
+
+  @override
+  String get settingsNoReleaseFound => 'GitHub 上还没有发布版本。';
+
+  @override
+  String settingsUpdateCompareFailed(Object version) {
+    return '找到了 GitHub 发布版本 $version，但无法比较这个标签。';
+  }
+
+  @override
+  String settingsUpdateCheckFailed(Object error) {
+    return '检查更新失败：$error';
+  }
+
+  @override
   String get totpEmpty => '还没有 TOTP，点击 + 导入。';
 
   @override
@@ -218,4 +290,114 @@ class AppLocalizationsZh extends AppLocalizations {
   String backupImportFailed(Object error) {
     return '导入失败：$error';
   }
+
+  @override
+  String get developerAddTitle => '新增开发者备份';
+
+  @override
+  String get developerEmpty =>
+      '还没有开发者备份，点击 + 添加 Android 签名密钥、API Key、SSH Key、环境变量或通用密钥。';
+
+  @override
+  String get developerAndroidSigningKey => 'Android 签名密钥';
+
+  @override
+  String get developerApiCredential => 'API 凭据';
+
+  @override
+  String get developerSshKey => 'SSH Key';
+
+  @override
+  String get developerEnvVarSet => '环境变量';
+
+  @override
+  String get developerGenericSecret => '通用密钥';
+
+  @override
+  String get developerSave => '保存';
+
+  @override
+  String get developerTitleLabel => '标题';
+
+  @override
+  String get developerNotesLabel => '备注';
+
+  @override
+  String get developerProjectNameLabel => '项目名';
+
+  @override
+  String get developerPackageNameLabel => '包名';
+
+  @override
+  String get developerKeystoreFileLabel => 'Keystore 文件';
+
+  @override
+  String get developerChooseFile => '选择 .jks / .keystore 文件';
+
+  @override
+  String get developerServiceNameLabel => '服务名';
+
+  @override
+  String get developerApiKeyLabel => 'API Key';
+
+  @override
+  String get developerApiSecretLabel => 'API Secret';
+
+  @override
+  String get developerKeyNameLabel => '密钥名';
+
+  @override
+  String get developerPublicKeyLabel => '公钥';
+
+  @override
+  String get developerPrivateKeyLabel => '私钥';
+
+  @override
+  String get developerPassphraseLabel => 'Passphrase';
+
+  @override
+  String get developerEnvVariablesLabel => '环境变量，每行一个 NAME=value';
+
+  @override
+  String get developerGenericFieldsLabel => '字段，每行一个 label=value';
+
+  @override
+  String get developerFileRequired => '请先选择 keystore 文件。';
+
+  @override
+  String get developerSaved => '开发者备份已保存';
+
+  @override
+  String developerSaveFailed(Object error) {
+    return '保存失败：$error';
+  }
+
+  @override
+  String get developerEntryMissing => '这条开发者备份已不存在。';
+
+  @override
+  String get developerEdit => '编辑';
+
+  @override
+  String get developerDeleteTitle => '删除这条开发者备份？';
+
+  @override
+  String get developerExportKeystore => '导出 keystore 文件';
+
+  @override
+  String get developerCopyKeyProperties => '复制 key.properties';
+
+  @override
+  String get developerFileShared => 'Keystore 文件已生成并分享';
+
+  @override
+  String developerFileExported(Object path) {
+    return 'Keystore 已导出到：$path';
+  }
+
+  @override
+  String get developerShowSecret => '显示密钥';
+
+  @override
+  String get developerHideSecret => '隐藏密钥';
 }

@@ -206,6 +206,126 @@ abstract class AppLocalizations {
   /// **'Backup'**
   String get tabBackup;
 
+  /// No description provided for @tabDeveloper.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer'**
+  String get tabDeveloper;
+
+  /// No description provided for @tabSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get tabSettings;
+
+  /// No description provided for @settingsVaultSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Vault Backup'**
+  String get settingsVaultSection;
+
+  /// No description provided for @settingsFeaturesSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Features'**
+  String get settingsFeaturesSection;
+
+  /// No description provided for @settingsDeveloperBackupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer Backup'**
+  String get settingsDeveloperBackupTitle;
+
+  /// No description provided for @settingsDeveloperBackupSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Store Android signing keys, API keys, SSH keys, env vars, and other developer secrets in the encrypted vault.'**
+  String get settingsDeveloperBackupSubtitle;
+
+  /// No description provided for @settingsVersionSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get settingsVersionSection;
+
+  /// No description provided for @settingsVersionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Version information'**
+  String get settingsVersionTitle;
+
+  /// No description provided for @settingsVersionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Checks GitHub Releases for newer RescueAuthKit builds.'**
+  String get settingsVersionSubtitle;
+
+  /// No description provided for @settingsLoadingVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading version...'**
+  String get settingsLoadingVersion;
+
+  /// No description provided for @settingsUnknownVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown version'**
+  String get settingsUnknownVersion;
+
+  /// No description provided for @settingsAppVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Current version: {version}'**
+  String settingsAppVersion(Object version);
+
+  /// No description provided for @settingsCheckUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Check for updates'**
+  String get settingsCheckUpdates;
+
+  /// No description provided for @settingsCheckingUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking...'**
+  String get settingsCheckingUpdates;
+
+  /// No description provided for @settingsOpenRelease.
+  ///
+  /// In en, this message translates to:
+  /// **'Open release'**
+  String get settingsOpenRelease;
+
+  /// No description provided for @settingsUpdateAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'New version available: {version}'**
+  String settingsUpdateAvailable(Object version);
+
+  /// No description provided for @settingsNoUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Already on latest version: {version}'**
+  String settingsNoUpdate(Object version);
+
+  /// No description provided for @settingsNoReleaseFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No GitHub release was found yet.'**
+  String get settingsNoReleaseFound;
+
+  /// No description provided for @settingsUpdateCompareFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Found GitHub release {version}, but its tag cannot be compared.'**
+  String settingsUpdateCompareFailed(Object version);
+
+  /// No description provided for @settingsUpdateCheckFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Update check failed: {error}'**
+  String settingsUpdateCheckFailed(Object error);
+
   /// No description provided for @totpEmpty.
   ///
   /// In en, this message translates to:
@@ -475,6 +595,216 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error importing vault: {error}'**
   String backupImportFailed(Object error);
+
+  /// No description provided for @developerAddTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add developer backup'**
+  String get developerAddTitle;
+
+  /// No description provided for @developerEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No developer backups yet. Tap + to add Android signing keys, API keys, SSH keys, environment variables, or generic secrets.'**
+  String get developerEmpty;
+
+  /// No description provided for @developerAndroidSigningKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Android Signing Key'**
+  String get developerAndroidSigningKey;
+
+  /// No description provided for @developerApiCredential.
+  ///
+  /// In en, this message translates to:
+  /// **'API Credential'**
+  String get developerApiCredential;
+
+  /// No description provided for @developerSshKey.
+  ///
+  /// In en, this message translates to:
+  /// **'SSH Key'**
+  String get developerSshKey;
+
+  /// No description provided for @developerEnvVarSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Environment Variables'**
+  String get developerEnvVarSet;
+
+  /// No description provided for @developerGenericSecret.
+  ///
+  /// In en, this message translates to:
+  /// **'Generic Secret'**
+  String get developerGenericSecret;
+
+  /// No description provided for @developerSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get developerSave;
+
+  /// No description provided for @developerTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get developerTitleLabel;
+
+  /// No description provided for @developerNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get developerNotesLabel;
+
+  /// No description provided for @developerProjectNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Project name'**
+  String get developerProjectNameLabel;
+
+  /// No description provided for @developerPackageNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Package name'**
+  String get developerPackageNameLabel;
+
+  /// No description provided for @developerKeystoreFileLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Keystore file'**
+  String get developerKeystoreFileLabel;
+
+  /// No description provided for @developerChooseFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose .jks / .keystore file'**
+  String get developerChooseFile;
+
+  /// No description provided for @developerServiceNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Service name'**
+  String get developerServiceNameLabel;
+
+  /// No description provided for @developerApiKeyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'API key'**
+  String get developerApiKeyLabel;
+
+  /// No description provided for @developerApiSecretLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'API secret'**
+  String get developerApiSecretLabel;
+
+  /// No description provided for @developerKeyNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Key name'**
+  String get developerKeyNameLabel;
+
+  /// No description provided for @developerPublicKeyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Public key'**
+  String get developerPublicKeyLabel;
+
+  /// No description provided for @developerPrivateKeyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Private key'**
+  String get developerPrivateKeyLabel;
+
+  /// No description provided for @developerPassphraseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Passphrase'**
+  String get developerPassphraseLabel;
+
+  /// No description provided for @developerEnvVariablesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Environment variables, one NAME=value per line'**
+  String get developerEnvVariablesLabel;
+
+  /// No description provided for @developerGenericFieldsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fields, one label=value per line'**
+  String get developerGenericFieldsLabel;
+
+  /// No description provided for @developerFileRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a keystore file first.'**
+  String get developerFileRequired;
+
+  /// No description provided for @developerSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer backup saved'**
+  String get developerSaved;
+
+  /// No description provided for @developerSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Save failed: {error}'**
+  String developerSaveFailed(Object error);
+
+  /// No description provided for @developerEntryMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'This developer backup no longer exists.'**
+  String get developerEntryMissing;
+
+  /// No description provided for @developerEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get developerEdit;
+
+  /// No description provided for @developerDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this developer backup?'**
+  String get developerDeleteTitle;
+
+  /// No description provided for @developerExportKeystore.
+  ///
+  /// In en, this message translates to:
+  /// **'Export keystore file'**
+  String get developerExportKeystore;
+
+  /// No description provided for @developerCopyKeyProperties.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy key.properties'**
+  String get developerCopyKeyProperties;
+
+  /// No description provided for @developerFileShared.
+  ///
+  /// In en, this message translates to:
+  /// **'Keystore file generated and shared'**
+  String get developerFileShared;
+
+  /// No description provided for @developerFileExported.
+  ///
+  /// In en, this message translates to:
+  /// **'Keystore exported to {path}'**
+  String developerFileExported(Object path);
+
+  /// No description provided for @developerShowSecret.
+  ///
+  /// In en, this message translates to:
+  /// **'Show secret'**
+  String get developerShowSecret;
+
+  /// No description provided for @developerHideSecret.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide secret'**
+  String get developerHideSecret;
 }
 
 class _AppLocalizationsDelegate

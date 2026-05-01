@@ -69,6 +69,78 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tabBackup => 'Backup';
 
   @override
+  String get tabDeveloper => 'Developer';
+
+  @override
+  String get tabSettings => 'Settings';
+
+  @override
+  String get settingsVaultSection => 'Vault Backup';
+
+  @override
+  String get settingsFeaturesSection => 'Features';
+
+  @override
+  String get settingsDeveloperBackupTitle => 'Developer Backup';
+
+  @override
+  String get settingsDeveloperBackupSubtitle =>
+      'Store Android signing keys, API keys, SSH keys, env vars, and other developer secrets in the encrypted vault.';
+
+  @override
+  String get settingsVersionSection => 'Version';
+
+  @override
+  String get settingsVersionTitle => 'Version information';
+
+  @override
+  String get settingsVersionSubtitle =>
+      'Checks GitHub Releases for newer RescueAuthKit builds.';
+
+  @override
+  String get settingsLoadingVersion => 'Loading version...';
+
+  @override
+  String get settingsUnknownVersion => 'Unknown version';
+
+  @override
+  String settingsAppVersion(Object version) {
+    return 'Current version: $version';
+  }
+
+  @override
+  String get settingsCheckUpdates => 'Check for updates';
+
+  @override
+  String get settingsCheckingUpdates => 'Checking...';
+
+  @override
+  String get settingsOpenRelease => 'Open release';
+
+  @override
+  String settingsUpdateAvailable(Object version) {
+    return 'New version available: $version';
+  }
+
+  @override
+  String settingsNoUpdate(Object version) {
+    return 'Already on latest version: $version';
+  }
+
+  @override
+  String get settingsNoReleaseFound => 'No GitHub release was found yet.';
+
+  @override
+  String settingsUpdateCompareFailed(Object version) {
+    return 'Found GitHub release $version, but its tag cannot be compared.';
+  }
+
+  @override
+  String settingsUpdateCheckFailed(Object error) {
+    return 'Update check failed: $error';
+  }
+
+  @override
   String get totpEmpty => 'No TOTP entries yet. Tap + to import.';
 
   @override
@@ -224,4 +296,115 @@ class AppLocalizationsEn extends AppLocalizations {
   String backupImportFailed(Object error) {
     return 'Error importing vault: $error';
   }
+
+  @override
+  String get developerAddTitle => 'Add developer backup';
+
+  @override
+  String get developerEmpty =>
+      'No developer backups yet. Tap + to add Android signing keys, API keys, SSH keys, environment variables, or generic secrets.';
+
+  @override
+  String get developerAndroidSigningKey => 'Android Signing Key';
+
+  @override
+  String get developerApiCredential => 'API Credential';
+
+  @override
+  String get developerSshKey => 'SSH Key';
+
+  @override
+  String get developerEnvVarSet => 'Environment Variables';
+
+  @override
+  String get developerGenericSecret => 'Generic Secret';
+
+  @override
+  String get developerSave => 'Save';
+
+  @override
+  String get developerTitleLabel => 'Title';
+
+  @override
+  String get developerNotesLabel => 'Notes';
+
+  @override
+  String get developerProjectNameLabel => 'Project name';
+
+  @override
+  String get developerPackageNameLabel => 'Package name';
+
+  @override
+  String get developerKeystoreFileLabel => 'Keystore file';
+
+  @override
+  String get developerChooseFile => 'Choose .jks / .keystore file';
+
+  @override
+  String get developerServiceNameLabel => 'Service name';
+
+  @override
+  String get developerApiKeyLabel => 'API key';
+
+  @override
+  String get developerApiSecretLabel => 'API secret';
+
+  @override
+  String get developerKeyNameLabel => 'Key name';
+
+  @override
+  String get developerPublicKeyLabel => 'Public key';
+
+  @override
+  String get developerPrivateKeyLabel => 'Private key';
+
+  @override
+  String get developerPassphraseLabel => 'Passphrase';
+
+  @override
+  String get developerEnvVariablesLabel =>
+      'Environment variables, one NAME=value per line';
+
+  @override
+  String get developerGenericFieldsLabel => 'Fields, one label=value per line';
+
+  @override
+  String get developerFileRequired => 'Choose a keystore file first.';
+
+  @override
+  String get developerSaved => 'Developer backup saved';
+
+  @override
+  String developerSaveFailed(Object error) {
+    return 'Save failed: $error';
+  }
+
+  @override
+  String get developerEntryMissing => 'This developer backup no longer exists.';
+
+  @override
+  String get developerEdit => 'Edit';
+
+  @override
+  String get developerDeleteTitle => 'Delete this developer backup?';
+
+  @override
+  String get developerExportKeystore => 'Export keystore file';
+
+  @override
+  String get developerCopyKeyProperties => 'Copy key.properties';
+
+  @override
+  String get developerFileShared => 'Keystore file generated and shared';
+
+  @override
+  String developerFileExported(Object path) {
+    return 'Keystore exported to $path';
+  }
+
+  @override
+  String get developerShowSecret => 'Show secret';
+
+  @override
+  String get developerHideSecret => 'Hide secret';
 }

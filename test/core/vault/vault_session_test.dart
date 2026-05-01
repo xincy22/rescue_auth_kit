@@ -88,4 +88,69 @@ void main() {
       await dir.delete(recursive: true);
     }
   });
+
+  test('developer backup setting and entries persist', () async {
+    final dir = await Directory.systemTemp.createTemp('rak_vault_test_');
+
+    try {
+      final vaultPath = p.join(dir.path, 'vault.rakvault');
+      final repo = VaultRepository.forPath(vaultFilePath: vaultPath);
+      final session = VaultSession(repo);
+
+      await session.createNew(password: 'testpassword');
+      expect(session.data.developerSettings.enabled, isFalse);
+      expect(session.data.developerEntries, isEmpty);
+
+      await session.setDeveloperBackupEnabled(true);
+      expect(session.data.developerSettings.enabled, isTrue);
+
+      await session.addDeveloperEntry(
+        type: DeveloperEntryType.androidSigningKey,
+        title: 'RescueAuthKit Android',
+        payload: const {
+          'projectName': 'RescueAuthKit',
+          'packageName': 'com.xincy.rescue_auth_kit',
+          'keystoreFileName': 'upload-keystore.jks',
+          'keystoreBytesBase64': 'AQIDBA==',
+          'storePassword': 'store-pass',
+          'keyAlias': 'upload',
+          'keyPassword': 'key-pass',
+        },
+      );
+      expect(session.data.developerEntries.length, 1);
+
+      final id = session.data.developerEntries.single.id;
+      await session.updateDeveloperEntry(
+        id: id,
+        title: 'Updated Android',
+        notes: 'release',
+        payload: const {
+          'projectName': 'Updated',
+          'packageName': 'com.example.updated',
+          'keystoreFileName': 'upload-keystore.jks',
+          'keystoreBytesBase64': 'AQIDBA==',
+          'storePassword': 'store-pass',
+          'keyAlias': 'upload',
+          'keyPassword': 'key-pass',
+        },
+      );
+      expect(session.data.developerEntries.single.title, 'Updated Android');
+      expect(session.data.developerEntries.single.notes, 'release');
+
+      await session.setDeveloperBackupEnabled(false);
+      expect(session.data.developerSettings.enabled, isFalse);
+      expect(session.data.developerEntries.length, 1);
+
+      session.lock();
+      await session.unlock(password: 'testpassword');
+
+      expect(session.data.developerSettings.enabled, isFalse);
+      expect(session.data.developerEntries.single.title, 'Updated Android');
+
+      await session.removeDeveloperEntry(id);
+      expect(session.data.developerEntries, isEmpty);
+    } finally {
+      await dir.delete(recursive: true);
+    }
+  });
 }

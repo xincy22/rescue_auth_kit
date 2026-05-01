@@ -157,4 +157,90 @@ class VaultSession extends ChangeNotifier {
     await _repo.save(_handle!);
     notifyListeners();
   }
+
+  Future<void> setDeveloperBackupEnabled(bool enabled) async {
+    final h = _handle;
+    if (h == null) throw const VaultLockedException();
+
+    final updated = h.data.copyWith(
+      developerSettings: h.data.developerSettings.copyWith(enabled: enabled),
+    );
+
+    _handle = h.copyWith(data: updated);
+    await _repo.save(_handle!);
+    notifyListeners();
+  }
+
+  Future<void> addDeveloperEntry({
+    required DeveloperEntryType type,
+    required String title,
+    String notes = '',
+    required Map<String, dynamic> payload,
+  }) async {
+    final h = _handle;
+    if (h == null) throw const VaultLockedException();
+
+    final now = DateTime.now();
+    final entry = DeveloperEntry(
+      id: _uuid.v4(),
+      type: type,
+      title: title.trim(),
+      notes: notes.trim(),
+      createdAt: now,
+      updatedAt: now,
+      payload: Map.unmodifiable(payload),
+    );
+
+    final updated = h.data.copyWith(
+      developerEntries: <DeveloperEntry>[...h.data.developerEntries, entry],
+    );
+
+    _handle = h.copyWith(data: updated);
+    await _repo.save(_handle!);
+    notifyListeners();
+  }
+
+  Future<void> updateDeveloperEntry({
+    required String id,
+    required String title,
+    required String notes,
+    required Map<String, dynamic> payload,
+  }) async {
+    final h = _handle;
+    if (h == null) throw const VaultLockedException();
+
+    final now = DateTime.now();
+    final updatedEntries = h.data.developerEntries
+        .map((entry) {
+          if (entry.id != id) return entry;
+          return entry.copyWith(
+            title: title.trim(),
+            notes: notes.trim(),
+            updatedAt: now,
+            payload: payload,
+          );
+        })
+        .toList(growable: false);
+
+    _handle = h.copyWith(
+      data: h.data.copyWith(developerEntries: updatedEntries),
+    );
+    await _repo.save(_handle!);
+    notifyListeners();
+  }
+
+  Future<void> removeDeveloperEntry(String id) async {
+    final h = _handle;
+    if (h == null) throw const VaultLockedException();
+
+    final updated = h.data.copyWith(
+      developerEntries: h.data.developerEntries
+          .where((entry) => entry.id != id)
+          .toList(growable: false),
+    );
+
+    _handle = h.copyWith(data: updated);
+    await _repo.save(_handle!);
+    notifyListeners();
+  }
 }

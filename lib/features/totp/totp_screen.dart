@@ -132,7 +132,9 @@ class _TotpScreenState extends State<TotpScreen> {
                         );
                         if (!context.mounted) return;
                         if (ok == true) {
-                          await context.read<VaultSession>().removeTotpEntry(e.id);
+                          await context.read<VaultSession>().removeTotpEntry(
+                            e.id,
+                          );
                         }
                       },
                     ),
@@ -141,11 +143,13 @@ class _TotpScreenState extends State<TotpScreen> {
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    Text(
-                      code,
-                      style: Theme.of(context).textTheme.headlineMedium,
+                    Expanded(
+                      child: Text(
+                        code,
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
                     ),
-                    const Spacer(),
+                    const SizedBox(width: 8),
                     IconButton(
                       tooltip: l10n.copied,
                       onPressed: () async {

@@ -60,7 +60,7 @@ flutter run -d <device-id>
 
 1. Create and unlock the vault on Device A
 2. Import a few TOTP entries and/or recovery codes
-3. Export from the Backup tab
+3. Export from the Settings tab
 4. Import that vault file on Device B using the same master password
 5. Confirm the same TOTP codes appear on both devices
 

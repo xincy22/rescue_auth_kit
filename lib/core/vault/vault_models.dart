@@ -1,4 +1,4 @@
-const int vaultDataSchemaVersion = 1;
+const int vaultDataSchemaVersion = 2;
 
 enum TotpHashAlgorithm { sha1, sha256, sha512 }
 
@@ -141,32 +141,170 @@ class RecoveryCodeSet {
   }
 }
 
+enum DeveloperEntryType {
+  androidSigningKey,
+  apiCredential,
+  sshKey,
+  envVarSet,
+  genericSecret,
+}
+
+extension DeveloperEntryTypeX on DeveloperEntryType {
+  String get jsonName => switch (this) {
+    DeveloperEntryType.androidSigningKey => 'androidSigningKey',
+    DeveloperEntryType.apiCredential => 'apiCredential',
+    DeveloperEntryType.sshKey => 'sshKey',
+    DeveloperEntryType.envVarSet => 'envVarSet',
+    DeveloperEntryType.genericSecret => 'genericSecret',
+  };
+
+  static DeveloperEntryType fromJsonName(String name) {
+    return switch (name) {
+      'androidSigningKey' => DeveloperEntryType.androidSigningKey,
+      'apiCredential' => DeveloperEntryType.apiCredential,
+      'sshKey' => DeveloperEntryType.sshKey,
+      'envVarSet' => DeveloperEntryType.envVarSet,
+      'genericSecret' => DeveloperEntryType.genericSecret,
+      _ => DeveloperEntryType.genericSecret,
+    };
+  }
+}
+
+class DeveloperSettings {
+  final bool enabled;
+
+  const DeveloperSettings({required this.enabled});
+
+  factory DeveloperSettings.disabled() =>
+      const DeveloperSettings(enabled: false);
+
+  DeveloperSettings copyWith({bool? enabled}) {
+    return DeveloperSettings(enabled: enabled ?? this.enabled);
+  }
+
+  Map<String, dynamic> toJson() => <String, dynamic>{'enabled': enabled};
+
+  factory DeveloperSettings.fromJson(Map<String, dynamic> json) {
+    return DeveloperSettings(enabled: json['enabled'] as bool? ?? false);
+  }
+}
+
+class DeveloperEntry {
+  final String id;
+  final DeveloperEntryType type;
+  final String title;
+  final String notes;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final Map<String, dynamic> payload;
+
+  const DeveloperEntry({
+    required this.id,
+    required this.type,
+    required this.title,
+    required this.notes,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.payload,
+  });
+
+  DeveloperEntry copyWith({
+    DeveloperEntryType? type,
+    String? title,
+    String? notes,
+    DateTime? updatedAt,
+    Map<String, dynamic>? payload,
+  }) {
+    return DeveloperEntry(
+      id: id,
+      type: type ?? this.type,
+      title: title ?? this.title,
+      notes: notes ?? this.notes,
+      createdAt: createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      payload: Map.unmodifiable(payload ?? this.payload),
+    );
+  }
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+    'id': id,
+    'type': type.jsonName,
+    'title': title,
+    'notes': notes,
+    'createdAt': createdAt.toIso8601String(),
+    'updatedAt': updatedAt.toIso8601String(),
+    'payload': payload,
+  };
+
+  factory DeveloperEntry.fromJson(Map<String, dynamic> json) {
+    final id = json['id'] as String?;
+    final typeName = json['type'] as String?;
+    final title = json['title'] as String?;
+    final createdAtStr = json['createdAt'] as String?;
+    final updatedAtStr = json['updatedAt'] as String?;
+
+    if (id == null ||
+        typeName == null ||
+        title == null ||
+        createdAtStr == null ||
+        updatedAtStr == null) {
+      throw FormatException('Invalid developer entry');
+    }
+
+    final payloadAny = json['payload'];
+
+    return DeveloperEntry(
+      id: id,
+      type: DeveloperEntryTypeX.fromJsonName(typeName),
+      title: title,
+      notes: json['notes'] as String? ?? '',
+      createdAt: DateTime.parse(createdAtStr),
+      updatedAt: DateTime.parse(updatedAtStr),
+      payload: payloadAny is Map
+          ? Map<String, dynamic>.unmodifiable(payloadAny)
+          : const <String, dynamic>{},
+    );
+  }
+}
+
 class VaultData {
   final int schemaVersion;
   final List<TotpEntry> totpEntries;
   final List<RecoveryCodeSet> recoveryCodeSets;
+  final DeveloperSettings developerSettings;
+  final List<DeveloperEntry> developerEntries;
 
   const VaultData({
     required this.schemaVersion,
     required this.totpEntries,
     required this.recoveryCodeSets,
+    required this.developerSettings,
+    required this.developerEntries,
   });
 
-  factory VaultData.empty() => const VaultData(
+  factory VaultData.empty() => VaultData(
     schemaVersion: vaultDataSchemaVersion,
-    totpEntries: <TotpEntry>[],
-    recoveryCodeSets: <RecoveryCodeSet>[],
+    totpEntries: const <TotpEntry>[],
+    recoveryCodeSets: const <RecoveryCodeSet>[],
+    developerSettings: DeveloperSettings.disabled(),
+    developerEntries: const <DeveloperEntry>[],
   );
 
   VaultData copyWith({
     List<TotpEntry>? totpEntries,
     List<RecoveryCodeSet>? recoveryCodeSets,
+    DeveloperSettings? developerSettings,
+    List<DeveloperEntry>? developerEntries,
   }) {
     return VaultData(
-      schemaVersion: schemaVersion,
+      schemaVersion: vaultDataSchemaVersion,
       totpEntries: List.unmodifiable(totpEntries ?? this.totpEntries),
       recoveryCodeSets: List.unmodifiable(
         recoveryCodeSets ?? this.recoveryCodeSets,
+      ),
+      developerSettings: developerSettings ?? this.developerSettings,
+      developerEntries: List.unmodifiable(
+        developerEntries ?? this.developerEntries,
       ),
     );
   }
@@ -177,6 +315,10 @@ class VaultData {
     'recoveryCodeSets': recoveryCodeSets
         .map((e) => e.toJson())
         .toList(growable: false),
+    'developerSettings': developerSettings.toJson(),
+    'developerEntries': developerEntries
+        .map((e) => e.toJson())
+        .toList(growable: false),
   };
 
   factory VaultData.fromJson(Map<String, dynamic> json) {
@@ -184,6 +326,8 @@ class VaultData {
 
     final totpsAny = json['totpEntries'];
     final recAny = json['recoveryCodeSets'];
+    final developerSettingsAny = json['developerSettings'];
+    final developerEntriesAny = json['developerEntries'];
 
     final totps = (totpsAny is List)
         ? totpsAny
@@ -201,10 +345,25 @@ class VaultData {
               .toList(growable: false)
         : <RecoveryCodeSet>[];
 
+    final developerSettings = developerSettingsAny is Map
+        ? DeveloperSettings.fromJson(
+            Map<String, dynamic>.from(developerSettingsAny),
+          )
+        : DeveloperSettings.disabled();
+
+    final developerEntries = (developerEntriesAny is List)
+        ? developerEntriesAny
+              .whereType<Map>()
+              .map((e) => DeveloperEntry.fromJson(Map<String, dynamic>.from(e)))
+              .toList(growable: false)
+        : <DeveloperEntry>[];
+
     return VaultData(
       schemaVersion: schemaVersion,
       totpEntries: List.unmodifiable(totps),
       recoveryCodeSets: List.unmodifiable(recs),
+      developerSettings: developerSettings,
+      developerEntries: List.unmodifiable(developerEntries),
     );
   }
 }

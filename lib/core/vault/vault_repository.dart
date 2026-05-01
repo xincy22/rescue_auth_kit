@@ -126,7 +126,10 @@ class VaultRepository {
           'Decrypted payload is not a JSON object',
         );
       }
-      final data = VaultData.fromJson(obj);
+      final data = _upgradeDataIfNeeded(VaultData.fromJson(obj));
+      if (data.schemaVersion != (obj['schemaVersion'] as int? ?? 1)) {
+        await _writeEncrypted(data: data, key: key, kdfParams: vaultFile.kdf);
+      }
 
       return VaultHandle(
         data: data,
@@ -180,9 +183,9 @@ class VaultRepository {
           'Decrypted payload is not a JSON object',
         );
       }
-      final data = VaultData.fromJson(obj);
+      final data = _upgradeDataIfNeeded(VaultData.fromJson(obj));
 
-      await _atomicWrite(bytes);
+      await _writeEncrypted(data: data, key: key, kdfParams: vaultFile.kdf);
 
       return VaultHandle(
         data: data,
@@ -241,5 +244,12 @@ class VaultRepository {
     if (await bak.exists()) {
       await bak.delete();
     }
+  }
+
+  VaultData _upgradeDataIfNeeded(VaultData data) {
+    if (data.schemaVersion >= vaultDataSchemaVersion) {
+      return data;
+    }
+    return data.copyWith();
   }
 }

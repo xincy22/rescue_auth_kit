@@ -25,6 +25,81 @@ void main() {
       schemaVersion: vaultDataSchemaVersion,
       totpEntries: [entry],
       recoveryCodeSets: [rec],
+      developerSettings: const DeveloperSettings(enabled: true),
+      developerEntries: [
+        DeveloperEntry(
+          id: 'd1',
+          type: DeveloperEntryType.androidSigningKey,
+          title: 'Android Signing',
+          notes: 'Release upload key',
+          createdAt: DateTime.parse('2026-01-01T12:00:00Z'),
+          updatedAt: DateTime.parse('2026-01-01T12:00:00Z'),
+          payload: const {
+            'projectName': 'RescueAuthKit',
+            'packageName': 'com.xincy.rescue_auth_kit',
+            'keystoreFileName': 'upload-keystore.jks',
+            'keystoreBytesBase64': 'AQIDBA==',
+            'storePassword': 'store-pass',
+            'keyAlias': 'upload',
+            'keyPassword': 'key-pass',
+          },
+        ),
+        DeveloperEntry(
+          id: 'd2',
+          type: DeveloperEntryType.apiCredential,
+          title: 'API',
+          notes: '',
+          createdAt: DateTime.parse('2026-01-01T12:00:00Z'),
+          updatedAt: DateTime.parse('2026-01-01T12:00:00Z'),
+          payload: const {
+            'serviceName': 'Example',
+            'accountName': 'user@example.com',
+            'apiKey': 'key',
+            'apiSecret': 'secret',
+          },
+        ),
+        DeveloperEntry(
+          id: 'd3',
+          type: DeveloperEntryType.sshKey,
+          title: 'SSH',
+          notes: '',
+          createdAt: DateTime.parse('2026-01-01T12:00:00Z'),
+          updatedAt: DateTime.parse('2026-01-01T12:00:00Z'),
+          payload: const {
+            'keyName': 'github',
+            'publicKey': 'ssh-ed25519 public',
+            'privateKey': 'private',
+            'passphrase': 'phrase',
+          },
+        ),
+        DeveloperEntry(
+          id: 'd4',
+          type: DeveloperEntryType.envVarSet,
+          title: 'Env',
+          notes: '',
+          createdAt: DateTime.parse('2026-01-01T12:00:00Z'),
+          updatedAt: DateTime.parse('2026-01-01T12:00:00Z'),
+          payload: const {
+            'projectName': 'Example',
+            'variables': [
+              {'name': 'API_KEY', 'value': 'value'},
+            ],
+          },
+        ),
+        DeveloperEntry(
+          id: 'd5',
+          type: DeveloperEntryType.genericSecret,
+          title: 'Generic',
+          notes: '',
+          createdAt: DateTime.parse('2026-01-01T12:00:00Z'),
+          updatedAt: DateTime.parse('2026-01-01T12:00:00Z'),
+          payload: const {
+            'fields': [
+              {'label': 'token', 'value': 'value'},
+            ],
+          },
+        ),
+      ],
     );
 
     final json = data.toJson();
@@ -33,6 +108,8 @@ void main() {
     expect(decoded.schemaVersion, data.schemaVersion);
     expect(decoded.totpEntries.length, 1);
     expect(decoded.recoveryCodeSets.length, 1);
+    expect(decoded.developerSettings.enabled, isTrue);
+    expect(decoded.developerEntries.length, 5);
 
     final e2 = decoded.totpEntries.single;
     expect(e2.id, entry.id);
@@ -49,5 +126,22 @@ void main() {
     expect(r2.title, rec.title);
     expect(r2.codes, rec.codes);
     expect(r2.createdAt.toIso8601String(), rec.createdAt.toIso8601String());
+
+    final developerTypes = decoded.developerEntries.map((e) => e.type).toSet();
+    expect(developerTypes, DeveloperEntryType.values.toSet());
+    expect(decoded.developerEntries.first.payload['keyAlias'], 'upload');
+  });
+
+  test('schema v1 vault data defaults developer backup off', () {
+    final decoded = VaultData.fromJson({
+      'schemaVersion': 1,
+      'totpEntries': const [],
+      'recoveryCodeSets': const [],
+    });
+
+    expect(decoded.schemaVersion, 1);
+    expect(decoded.developerSettings.enabled, isFalse);
+    expect(decoded.developerEntries, isEmpty);
+    expect(decoded.copyWith().schemaVersion, vaultDataSchemaVersion);
   });
 }
