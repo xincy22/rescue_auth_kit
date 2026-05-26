@@ -58,12 +58,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get lockTooltip => '锁定 Vault';
 
   @override
-  String get tabTotp => 'TOTP';
-
-  @override
-  String get tabRecovery => '恢复码';
-
-  @override
   String get tabBackup => '备份';
 
   @override
@@ -139,9 +133,6 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get totpEmpty => '还没有 TOTP，点击 + 导入。';
-
-  @override
   String get totpCopied => '已复制验证码';
 
   @override
@@ -150,16 +141,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get totpNoIssuer => '（无发行方）';
-
-  @override
-  String get totpDeleteTitle => '删除此 TOTP 条目？';
-
-  @override
   String get addTotpSheetScan => '扫码导入';
-
-  @override
-  String get addTotpSheetPaste => '粘贴 otpauth URI';
 
   @override
   String get pasteDialogTitle => '粘贴 otpauth URI';
@@ -205,18 +187,9 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get recoveryEmpty => '还没有恢复码，点击 + 添加。';
-
-  @override
-  String get recoveryNoTitle => '（无标题）';
-
-  @override
   String recoveryCodesCount(Object count) {
     return '$count 个恢复码';
   }
-
-  @override
-  String get recoveryDeleteTitle => '删除这组恢复码？';
 
   @override
   String get deleteButton => '删除';
@@ -229,9 +202,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get addRecoveryTitle => '新增恢复码';
-
-  @override
-  String get titleOptionalLabel => '标题（可选）';
 
   @override
   String get recoveryCodesLabel => '恢复码（每行一个）';
@@ -400,4 +370,166 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get developerHideSecret => '隐藏密钥';
+
+  @override
+  String get tabAccounts => '账户';
+
+  @override
+  String get tabProviders => '提供商';
+
+  @override
+  String get accountsListEmpty => '还没有账户，点击 + 添加凭据。';
+
+  @override
+  String get providersListEmpty => '还没有提供商，点击 + 添加凭据。';
+
+  @override
+  String providersListAccountCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 个账户',
+      one: '1 个账户',
+      zero: '无账户',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get providerNameLabel => '提供商名称';
+
+  @override
+  String get providerActions => '提供商操作';
+
+  @override
+  String get providerRename => '重命名提供商';
+
+  @override
+  String get providerDelete => '删除提供商';
+
+  @override
+  String providerDeleteConfirm(String name) {
+    return '确定删除提供商 \"$name\" 及其下的所有账户？';
+  }
+
+  @override
+  String get pickerModeNewProvider => '新建提供商';
+
+  @override
+  String get pickerModeExistingProvider => '已有提供商';
+
+  @override
+  String get pickerModeExistingAccount => '已有账户';
+
+  @override
+  String get destinationSelectorTitle => '保存到';
+
+  @override
+  String get destinationLockedToProvider => '保存到此提供商下';
+
+  @override
+  String get destinationLockedToAccount => '保存到此账户';
+
+  @override
+  String get accountMoveTitle => '移动到提供商';
+
+  @override
+  String get accountMoveAction => '移动到提供商…';
+
+  @override
+  String get accountMoveConfirm => '移动';
+
+  @override
+  String get accountMergeTitle => '合并到其他账户';
+
+  @override
+  String get accountMergeAction => '合并到…';
+
+  @override
+  String get accountMergeConfirm => '合并';
+
+  @override
+  String get accountMergeTargetLabel => '目标账户';
+
+  @override
+  String get accountMergeNoOtherAccounts => '没有可合并到的其他账户。';
+
+  @override
+  String accountMergePrompt(String name) {
+    return '将“$name”下的所有凭据追加到目标账户，然后删除此账户。';
+  }
+
+  @override
+  String get credentialMoveTitle => '移动到其他账户';
+
+  @override
+  String get credentialMoveAction => '移动到其他账户…';
+
+  @override
+  String get credentialMoveNoOtherAccounts => '没有可移动到的其他账户。';
+
+  @override
+  String get credentialEditAction => '编辑恢复码…';
+
+  @override
+  String get editRecoveryTitle => '编辑恢复码';
+
+  @override
+  String get accountsBadgeTotp => 'TOTP';
+
+  @override
+  String get accountsBadgeRecovery => '恢复码';
+
+  @override
+  String get accountDetailRename => '重命名';
+
+  @override
+  String get accountDetailDeleteAccount => '删除账户';
+
+  @override
+  String get accountDetailDeleteAccountConfirm => '删除此账户及其所有凭据？';
+
+  @override
+  String get accountDetailAddCredential => '为此账户添加凭据';
+
+  @override
+  String get accountDetailDeleteCredential => '删除凭据';
+
+  @override
+  String get accountDetailDeleteCredentialConfirm => '删除此凭据？';
+
+  @override
+  String get accountDetailEmptyState => '还没有凭据，添加一个开始使用。';
+
+  @override
+  String get accountPickerTitle => '选择目标';
+
+  @override
+  String get accountPickerCreateNew => '创建新账户';
+
+  @override
+  String get accountPickerAttachExisting => '附加到已有账户';
+
+  @override
+  String get accountPickerSearchPlaceholder => '搜索账户';
+
+  @override
+  String get addCredentialSheetTitle => '添加凭据';
+
+  @override
+  String get addCredentialScan => '扫码导入';
+
+  @override
+  String get addCredentialPaste => '粘贴 otpauth URI';
+
+  @override
+  String get addCredentialRecoveryCodes => '添加恢复码';
+
+  @override
+  String vaultFormatErrorFutureVersion(int n) {
+    return 'Vault 由更新版本的应用创建（schemaVersion = $n）。';
+  }
+
+  @override
+  String get vaultFormatErrorGeneric => 'Vault 格式无效，无法打开。';
 }

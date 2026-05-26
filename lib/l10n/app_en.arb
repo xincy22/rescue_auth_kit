@@ -14,8 +14,7 @@
   "createFailed": "Failed to create vault: {error}",
   "incorrectPassword": "Incorrect password (or vault is corrupted).",
   "lockTooltip": "Lock Vault",
-  "tabTotp": "TOTP",
-  "tabRecovery": "Recovery",
+
   "tabBackup": "Backup",
   "tabDeveloper": "Developer",
   "tabSettings": "Settings",
@@ -37,13 +36,12 @@
   "settingsNoReleaseFound": "No GitHub release was found yet.",
   "settingsUpdateCompareFailed": "Found GitHub release {version}, but its tag cannot be compared.",
   "settingsUpdateCheckFailed": "Update check failed: {error}",
-  "totpEmpty": "No TOTP entries yet. Tap + to import.",
+
   "totpCopied": "TOTP code copied",
   "totpExpiresIn": "Expires in {seconds} seconds",
-  "totpNoIssuer": "(No issuer)",
-  "totpDeleteTitle": "Delete this TOTP entry?",
+
   "addTotpSheetScan": "Scan QR",
-  "addTotpSheetPaste": "Paste otpauth URI",
+
   "pasteDialogTitle": "Paste otpauth URI",
   "pasteDialogHint": "otpauth://totp/Issuer:Account?secret=...",
   "dialogCancel": "Cancel",
@@ -57,15 +55,13 @@
   "saveToVault": "Save to Vault",
   "importSaved": "TOTP entry saved",
   "importSaveFailed": "Failed to save TOTP entry: {error}",
-  "recoveryEmpty": "No recovery codes yet. Tap + to add.",
-  "recoveryNoTitle": "(No title)",
+
   "recoveryCodesCount": "{count} codes",
-  "recoveryDeleteTitle": "Delete this recovery set?",
+
   "deleteButton": "Delete",
   "copyAllTooltip": "Copy all",
   "copied": "Copied",
   "addRecoveryTitle": "Add Recovery Codes",
-  "titleOptionalLabel": "Title (optional)",
   "recoveryCodesLabel": "Recovery codes (one per line)",
   "recoveryNeedOne": "Enter at least one code.",
   "recoverySaved": "Recovery codes saved",
@@ -116,5 +112,87 @@
   "developerFileShared": "Keystore file generated and shared",
   "developerFileExported": "Keystore exported to {path}",
   "developerShowSecret": "Show secret",
-  "developerHideSecret": "Hide secret"
+  "developerHideSecret": "Hide secret",
+
+  "tabAccounts": "Accounts",
+  "tabProviders": "Providers",
+  "accountsListEmpty": "No accounts yet. Tap + to add a credential.",
+  "providersListEmpty": "No providers yet. Tap + to add a credential.",
+  "providersListAccountCount": "{count, plural, =0{No accounts} =1{1 account} other{{count} accounts}}",
+  "@providersListAccountCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "providerNameLabel": "Provider name",
+  "providerActions": "Provider actions",
+  "providerRename": "Rename provider",
+  "providerDelete": "Delete provider",
+  "providerDeleteConfirm": "Delete provider \"{name}\" and all its accounts?",
+  "@providerDeleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pickerModeNewProvider": "New provider",
+  "pickerModeExistingProvider": "Existing provider",
+  "pickerModeExistingAccount": "Existing account",
+  "destinationSelectorTitle": "Save to",
+  "destinationLockedToProvider": "Save under provider",
+  "destinationLockedToAccount": "Save to account",
+  "accountMoveTitle": "Move to provider",
+  "accountMoveAction": "Move to provider...",
+  "accountMoveConfirm": "Move",
+  "accountMergeTitle": "Merge into another account",
+  "accountMergeAction": "Merge into...",
+  "accountMergeConfirm": "Merge",
+  "accountMergeTargetLabel": "Target account",
+  "accountMergeNoOtherAccounts": "There are no other accounts to merge into.",
+  "accountMergePrompt": "Append all credentials of \"{name}\" to the target account, then delete this account.",
+  "@accountMergePrompt": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "credentialMoveTitle": "Move to another account",
+  "credentialMoveAction": "Move to account...",
+  "credentialMoveNoOtherAccounts": "There are no other accounts to move this credential to.",
+  "credentialEditAction": "Edit codes...",
+  "editRecoveryTitle": "Edit Recovery Codes",
+  "accountsBadgeTotp": "TOTP",
+  "accountsBadgeRecovery": "Recovery",
+
+  "accountDetailRename": "Rename",
+  "accountDetailDeleteAccount": "Delete account",
+  "accountDetailDeleteAccountConfirm": "Delete this account and all its credentials?",
+  "accountDetailAddCredential": "Add credential to this account",
+  "accountDetailDeleteCredential": "Delete credential",
+  "accountDetailDeleteCredentialConfirm": "Delete this credential?",
+  "accountDetailEmptyState": "No credentials yet. Add one to get started.",
+
+  "accountPickerTitle": "Choose destination",
+  "accountPickerCreateNew": "Create new account",
+  "accountPickerAttachExisting": "Attach to existing account",
+  "accountPickerSearchPlaceholder": "Search accounts",
+
+  "addCredentialSheetTitle": "Add credential",
+  "addCredentialScan": "Scan QR",
+  "addCredentialPaste": "Paste otpauth URI",
+  "addCredentialRecoveryCodes": "Add recovery codes",
+
+  "vaultFormatErrorFutureVersion": "Vault was created by a newer app version (schemaVersion = {n}).",
+  "@vaultFormatErrorFutureVersion": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "vaultFormatErrorGeneric": "Vault format is invalid and cannot be opened."
 }

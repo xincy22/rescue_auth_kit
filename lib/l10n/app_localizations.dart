@@ -188,18 +188,6 @@ abstract class AppLocalizations {
   /// **'Lock Vault'**
   String get lockTooltip;
 
-  /// No description provided for @tabTotp.
-  ///
-  /// In en, this message translates to:
-  /// **'TOTP'**
-  String get tabTotp;
-
-  /// No description provided for @tabRecovery.
-  ///
-  /// In en, this message translates to:
-  /// **'Recovery'**
-  String get tabRecovery;
-
   /// No description provided for @tabBackup.
   ///
   /// In en, this message translates to:
@@ -326,12 +314,6 @@ abstract class AppLocalizations {
   /// **'Update check failed: {error}'**
   String settingsUpdateCheckFailed(Object error);
 
-  /// No description provided for @totpEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'No TOTP entries yet. Tap + to import.'**
-  String get totpEmpty;
-
   /// No description provided for @totpCopied.
   ///
   /// In en, this message translates to:
@@ -344,29 +326,11 @@ abstract class AppLocalizations {
   /// **'Expires in {seconds} seconds'**
   String totpExpiresIn(Object seconds);
 
-  /// No description provided for @totpNoIssuer.
-  ///
-  /// In en, this message translates to:
-  /// **'(No issuer)'**
-  String get totpNoIssuer;
-
-  /// No description provided for @totpDeleteTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete this TOTP entry?'**
-  String get totpDeleteTitle;
-
   /// No description provided for @addTotpSheetScan.
   ///
   /// In en, this message translates to:
   /// **'Scan QR'**
   String get addTotpSheetScan;
-
-  /// No description provided for @addTotpSheetPaste.
-  ///
-  /// In en, this message translates to:
-  /// **'Paste otpauth URI'**
-  String get addTotpSheetPaste;
 
   /// No description provided for @pasteDialogTitle.
   ///
@@ -446,29 +410,11 @@ abstract class AppLocalizations {
   /// **'Failed to save TOTP entry: {error}'**
   String importSaveFailed(Object error);
 
-  /// No description provided for @recoveryEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'No recovery codes yet. Tap + to add.'**
-  String get recoveryEmpty;
-
-  /// No description provided for @recoveryNoTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'(No title)'**
-  String get recoveryNoTitle;
-
   /// No description provided for @recoveryCodesCount.
   ///
   /// In en, this message translates to:
   /// **'{count} codes'**
   String recoveryCodesCount(Object count);
-
-  /// No description provided for @recoveryDeleteTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete this recovery set?'**
-  String get recoveryDeleteTitle;
 
   /// No description provided for @deleteButton.
   ///
@@ -493,12 +439,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add Recovery Codes'**
   String get addRecoveryTitle;
-
-  /// No description provided for @titleOptionalLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Title (optional)'**
-  String get titleOptionalLabel;
 
   /// No description provided for @recoveryCodesLabel.
   ///
@@ -805,6 +745,300 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hide secret'**
   String get developerHideSecret;
+
+  /// No description provided for @tabAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounts'**
+  String get tabAccounts;
+
+  /// No description provided for @tabProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'Providers'**
+  String get tabProviders;
+
+  /// No description provided for @accountsListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No accounts yet. Tap + to add a credential.'**
+  String get accountsListEmpty;
+
+  /// No description provided for @providersListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No providers yet. Tap + to add a credential.'**
+  String get providersListEmpty;
+
+  /// No description provided for @providersListAccountCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No accounts} =1{1 account} other{{count} accounts}}'**
+  String providersListAccountCount(int count);
+
+  /// No description provided for @providerNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider name'**
+  String get providerNameLabel;
+
+  /// No description provided for @providerActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider actions'**
+  String get providerActions;
+
+  /// No description provided for @providerRename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename provider'**
+  String get providerRename;
+
+  /// No description provided for @providerDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete provider'**
+  String get providerDelete;
+
+  /// No description provided for @providerDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete provider \"{name}\" and all its accounts?'**
+  String providerDeleteConfirm(String name);
+
+  /// No description provided for @pickerModeNewProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'New provider'**
+  String get pickerModeNewProvider;
+
+  /// No description provided for @pickerModeExistingProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Existing provider'**
+  String get pickerModeExistingProvider;
+
+  /// No description provided for @pickerModeExistingAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Existing account'**
+  String get pickerModeExistingAccount;
+
+  /// No description provided for @destinationSelectorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to'**
+  String get destinationSelectorTitle;
+
+  /// No description provided for @destinationLockedToProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Save under provider'**
+  String get destinationLockedToProvider;
+
+  /// No description provided for @destinationLockedToAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to account'**
+  String get destinationLockedToAccount;
+
+  /// No description provided for @accountMoveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to provider'**
+  String get accountMoveTitle;
+
+  /// No description provided for @accountMoveAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to provider...'**
+  String get accountMoveAction;
+
+  /// No description provided for @accountMoveConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Move'**
+  String get accountMoveConfirm;
+
+  /// No description provided for @accountMergeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Merge into another account'**
+  String get accountMergeTitle;
+
+  /// No description provided for @accountMergeAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Merge into...'**
+  String get accountMergeAction;
+
+  /// No description provided for @accountMergeConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Merge'**
+  String get accountMergeConfirm;
+
+  /// No description provided for @accountMergeTargetLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Target account'**
+  String get accountMergeTargetLabel;
+
+  /// No description provided for @accountMergeNoOtherAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no other accounts to merge into.'**
+  String get accountMergeNoOtherAccounts;
+
+  /// No description provided for @accountMergePrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Append all credentials of \"{name}\" to the target account, then delete this account.'**
+  String accountMergePrompt(String name);
+
+  /// No description provided for @credentialMoveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to another account'**
+  String get credentialMoveTitle;
+
+  /// No description provided for @credentialMoveAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to account...'**
+  String get credentialMoveAction;
+
+  /// No description provided for @credentialMoveNoOtherAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no other accounts to move this credential to.'**
+  String get credentialMoveNoOtherAccounts;
+
+  /// No description provided for @credentialEditAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit codes...'**
+  String get credentialEditAction;
+
+  /// No description provided for @editRecoveryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Recovery Codes'**
+  String get editRecoveryTitle;
+
+  /// No description provided for @accountsBadgeTotp.
+  ///
+  /// In en, this message translates to:
+  /// **'TOTP'**
+  String get accountsBadgeTotp;
+
+  /// No description provided for @accountsBadgeRecovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery'**
+  String get accountsBadgeRecovery;
+
+  /// No description provided for @accountDetailRename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get accountDetailRename;
+
+  /// No description provided for @accountDetailDeleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get accountDetailDeleteAccount;
+
+  /// No description provided for @accountDetailDeleteAccountConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this account and all its credentials?'**
+  String get accountDetailDeleteAccountConfirm;
+
+  /// No description provided for @accountDetailAddCredential.
+  ///
+  /// In en, this message translates to:
+  /// **'Add credential to this account'**
+  String get accountDetailAddCredential;
+
+  /// No description provided for @accountDetailDeleteCredential.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete credential'**
+  String get accountDetailDeleteCredential;
+
+  /// No description provided for @accountDetailDeleteCredentialConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this credential?'**
+  String get accountDetailDeleteCredentialConfirm;
+
+  /// No description provided for @accountDetailEmptyState.
+  ///
+  /// In en, this message translates to:
+  /// **'No credentials yet. Add one to get started.'**
+  String get accountDetailEmptyState;
+
+  /// No description provided for @accountPickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose destination'**
+  String get accountPickerTitle;
+
+  /// No description provided for @accountPickerCreateNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Create new account'**
+  String get accountPickerCreateNew;
+
+  /// No description provided for @accountPickerAttachExisting.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach to existing account'**
+  String get accountPickerAttachExisting;
+
+  /// No description provided for @accountPickerSearchPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Search accounts'**
+  String get accountPickerSearchPlaceholder;
+
+  /// No description provided for @addCredentialSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add credential'**
+  String get addCredentialSheetTitle;
+
+  /// No description provided for @addCredentialScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR'**
+  String get addCredentialScan;
+
+  /// No description provided for @addCredentialPaste.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste otpauth URI'**
+  String get addCredentialPaste;
+
+  /// No description provided for @addCredentialRecoveryCodes.
+  ///
+  /// In en, this message translates to:
+  /// **'Add recovery codes'**
+  String get addCredentialRecoveryCodes;
+
+  /// No description provided for @vaultFormatErrorFutureVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Vault was created by a newer app version (schemaVersion = {n}).'**
+  String vaultFormatErrorFutureVersion(int n);
+
+  /// No description provided for @vaultFormatErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Vault format is invalid and cannot be opened.'**
+  String get vaultFormatErrorGeneric;
 }
 
 class _AppLocalizationsDelegate

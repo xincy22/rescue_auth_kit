@@ -14,8 +14,7 @@
   "createFailed": "创建失败：{error}",
   "incorrectPassword": "密码错误（或 Vault 已损坏）。",
   "lockTooltip": "锁定 Vault",
-  "tabTotp": "TOTP",
-  "tabRecovery": "恢复码",
+
   "tabBackup": "备份",
   "tabDeveloper": "开发者",
   "tabSettings": "设置",
@@ -37,13 +36,12 @@
   "settingsNoReleaseFound": "GitHub 上还没有发布版本。",
   "settingsUpdateCompareFailed": "找到了 GitHub 发布版本 {version}，但无法比较这个标签。",
   "settingsUpdateCheckFailed": "检查更新失败：{error}",
-  "totpEmpty": "还没有 TOTP，点击 + 导入。",
+
   "totpCopied": "已复制验证码",
   "totpExpiresIn": "剩余 {seconds} 秒",
-  "totpNoIssuer": "（无发行方）",
-  "totpDeleteTitle": "删除此 TOTP 条目？",
+
   "addTotpSheetScan": "扫码导入",
-  "addTotpSheetPaste": "粘贴 otpauth URI",
+
   "pasteDialogTitle": "粘贴 otpauth URI",
   "pasteDialogHint": "otpauth://totp/Issuer:Account?secret=...",
   "dialogCancel": "取消",
@@ -57,15 +55,13 @@
   "saveToVault": "保存到 Vault",
   "importSaved": "已保存 TOTP",
   "importSaveFailed": "保存失败：{error}",
-  "recoveryEmpty": "还没有恢复码，点击 + 添加。",
-  "recoveryNoTitle": "（无标题）",
+
   "recoveryCodesCount": "{count} 个恢复码",
-  "recoveryDeleteTitle": "删除这组恢复码？",
+
   "deleteButton": "删除",
   "copyAllTooltip": "复制全部",
   "copied": "已复制",
   "addRecoveryTitle": "新增恢复码",
-  "titleOptionalLabel": "标题（可选）",
   "recoveryCodesLabel": "恢复码（每行一个）",
   "recoveryNeedOne": "至少输入一个恢复码。",
   "recoverySaved": "恢复码已保存",
@@ -116,5 +112,87 @@
   "developerFileShared": "Keystore 文件已生成并分享",
   "developerFileExported": "Keystore 已导出到：{path}",
   "developerShowSecret": "显示密钥",
-  "developerHideSecret": "隐藏密钥"
+  "developerHideSecret": "隐藏密钥",
+
+  "tabAccounts": "账户",
+  "tabProviders": "提供商",
+  "accountsListEmpty": "还没有账户，点击 + 添加凭据。",
+  "providersListEmpty": "还没有提供商，点击 + 添加凭据。",
+  "providersListAccountCount": "{count, plural, =0{无账户} =1{1 个账户} other{{count} 个账户}}",
+  "@providersListAccountCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "providerNameLabel": "提供商名称",
+  "providerActions": "提供商操作",
+  "providerRename": "重命名提供商",
+  "providerDelete": "删除提供商",
+  "providerDeleteConfirm": "确定删除提供商 \"{name}\" 及其下的所有账户？",
+  "@providerDeleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pickerModeNewProvider": "新建提供商",
+  "pickerModeExistingProvider": "已有提供商",
+  "pickerModeExistingAccount": "已有账户",
+  "destinationSelectorTitle": "保存到",
+  "destinationLockedToProvider": "保存到此提供商下",
+  "destinationLockedToAccount": "保存到此账户",
+  "accountMoveTitle": "移动到提供商",
+  "accountMoveAction": "移动到提供商…",
+  "accountMoveConfirm": "移动",
+  "accountMergeTitle": "合并到其他账户",
+  "accountMergeAction": "合并到…",
+  "accountMergeConfirm": "合并",
+  "accountMergeTargetLabel": "目标账户",
+  "accountMergeNoOtherAccounts": "没有可合并到的其他账户。",
+  "accountMergePrompt": "将“{name}”下的所有凭据追加到目标账户，然后删除此账户。",
+  "@accountMergePrompt": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "credentialMoveTitle": "移动到其他账户",
+  "credentialMoveAction": "移动到其他账户…",
+  "credentialMoveNoOtherAccounts": "没有可移动到的其他账户。",
+  "credentialEditAction": "编辑恢复码…",
+  "editRecoveryTitle": "编辑恢复码",
+  "accountsBadgeTotp": "TOTP",
+  "accountsBadgeRecovery": "恢复码",
+
+  "accountDetailRename": "重命名",
+  "accountDetailDeleteAccount": "删除账户",
+  "accountDetailDeleteAccountConfirm": "删除此账户及其所有凭据？",
+  "accountDetailAddCredential": "为此账户添加凭据",
+  "accountDetailDeleteCredential": "删除凭据",
+  "accountDetailDeleteCredentialConfirm": "删除此凭据？",
+  "accountDetailEmptyState": "还没有凭据，添加一个开始使用。",
+
+  "accountPickerTitle": "选择目标",
+  "accountPickerCreateNew": "创建新账户",
+  "accountPickerAttachExisting": "附加到已有账户",
+  "accountPickerSearchPlaceholder": "搜索账户",
+
+  "addCredentialSheetTitle": "添加凭据",
+  "addCredentialScan": "扫码导入",
+  "addCredentialPaste": "粘贴 otpauth URI",
+  "addCredentialRecoveryCodes": "添加恢复码",
+
+  "vaultFormatErrorFutureVersion": "Vault 由更新版本的应用创建（schemaVersion = {n}）。",
+  "@vaultFormatErrorFutureVersion": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "vaultFormatErrorGeneric": "Vault 格式无效，无法打开。"
 }

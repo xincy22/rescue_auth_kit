@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
-import '../import/otpauth_parser.dart';
 import 'vault_models.dart';
 import 'vault_repository.dart';
 
@@ -13,8 +12,10 @@ class VaultLockedException implements Exception {
   String toString() => 'VaultLockedException: vault is locked';
 }
 
-/// In-memory session state. UI should talk to this instead of directly using
-/// repository/crypto.
+/// In-memory session state. UI talks to this instead of using the repository
+/// directly. Every successful mutator persists atomically through the
+/// repository BEFORE the new handle is committed and listeners are notified
+/// exactly once.
 class VaultSession extends ChangeNotifier {
   final VaultRepository _repo;
   final Uuid _uuid = const Uuid();
@@ -67,45 +68,6 @@ class VaultSession extends ChangeNotifier {
     await _repo.save(h);
   }
 
-  Future<void> addTotpFromParsed(ParsedTotp parsed) async {
-    final h = _handle;
-    if (h == null) throw const VaultLockedException();
-
-    final entry = TotpEntry(
-      id: _uuid.v4(),
-      issuer: parsed.issuer,
-      accountName: parsed.accountName,
-      secretBase32: parsed.secretBase32,
-      algorithm: parsed.algorithm,
-      digits: parsed.digits,
-      period: parsed.period,
-      createdAt: DateTime.now(),
-    );
-
-    final updated = h.data.copyWith(
-      totpEntries: <TotpEntry>[...h.data.totpEntries, entry],
-    );
-
-    _handle = h.copyWith(data: updated);
-    await _repo.save(_handle!);
-    notifyListeners();
-  }
-
-  Future<void> removeTotpEntry(String id) async {
-    final h = _handle;
-    if (h == null) throw const VaultLockedException();
-
-    final updated = h.data.copyWith(
-      totpEntries: h.data.totpEntries
-          .where((e) => e.id != id)
-          .toList(growable: false),
-    );
-
-    _handle = h.copyWith(data: updated);
-    await _repo.save(_handle!);
-    notifyListeners();
-  }
-
   Future<void> importVault({
     required Uint8List vaultBytes,
     required String password,
@@ -115,60 +77,254 @@ class VaultSession extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addRecoverySet({
-    required String title,
-    required List<String> codes,
+  // ---------------------------------------------------------------------------
+  // Persistence helper: apply a pure transformation to data, save, then notify.
+  // ---------------------------------------------------------------------------
+
+  Future<void> _persist(VaultData newData) async {
+    final h = _handle!;
+    final newHandle = h.copyWith(data: newData);
+    await _repo.save(newHandle);
+    _handle = newHandle;
+    notifyListeners();
+  }
+
+  // ---------------------------------------------------------------------------
+  // ServiceProvider operations
+  // ---------------------------------------------------------------------------
+
+  Future<ServiceProvider> addProvider({required String name}) async {
+    final h = _handle;
+    if (h == null) throw const VaultLockedException();
+    final now = DateTime.now();
+    final p = ServiceProvider(
+      id: _uuid.v4(),
+      name: name.trim(),
+      createdAt: now,
+      updatedAt: now,
+    );
+    await _persist(h.data.withNewProvider(p));
+    return p;
+  }
+
+  Future<void> renameProvider({
+    required String providerId,
+    required String name,
   }) async {
     final h = _handle;
     if (h == null) throw const VaultLockedException();
-
-    final normalizedCodes = codes
-        .map((e) => e.trim())
-        .where((e) => e.isNotEmpty)
-        .toList(growable: false);
-
-    final set = RecoveryCodeSet(
-      id: _uuid.v4(),
-      title: title.trim(),
-      codes: normalizedCodes,
-      createdAt: DateTime.now(),
-    );
-
-    final updated = h.data.copyWith(
-      recoveryCodeSets: <RecoveryCodeSet>[...h.data.recoveryCodeSets, set],
-    );
-
-    _handle = h.copyWith(data: updated);
-    await _repo.save(_handle!);
-    notifyListeners();
+    await _persist(h.data.withRenamedProvider(
+      providerId,
+      name: name.trim(),
+      now: DateTime.now(),
+    ));
   }
 
-  Future<void> removeRecoverySet(String id) async {
+  /// Removes a ServiceProvider and cascades to all its accounts.
+  Future<void> removeProvider(String providerId) async {
     final h = _handle;
     if (h == null) throw const VaultLockedException();
-
-    final updated = h.data.copyWith(
-      recoveryCodeSets: h.data.recoveryCodeSets
-          .where((e) => e.id != id)
-          .toList(growable: false),
-    );
-
-    _handle = h.copyWith(data: updated);
-    await _repo.save(_handle!);
-    notifyListeners();
+    await _persist(h.data.withoutProvider(providerId));
   }
+
+  // ---------------------------------------------------------------------------
+  // Account operations
+  // ---------------------------------------------------------------------------
+
+  Future<Account> addAccount({
+    required String providerId,
+    required String displayName,
+  }) async {
+    final h = _handle;
+    if (h == null) throw const VaultLockedException();
+    final now = DateTime.now();
+    final account = Account(
+      id: _uuid.v4(),
+      providerId: providerId,
+      displayName: displayName.trim(),
+      createdAt: now,
+      updatedAt: now,
+      credentials: const [],
+    );
+    await _persist(h.data.withNewAccount(account));
+    return account;
+  }
+
+  Future<void> renameAccount({
+    required String accountId,
+    required String displayName,
+  }) async {
+    final h = _handle;
+    if (h == null) throw const VaultLockedException();
+    await _persist(h.data.withRenamedAccount(
+      accountId,
+      displayName: displayName.trim(),
+      now: DateTime.now(),
+    ));
+  }
+
+  Future<void> moveAccountToProvider({
+    required String accountId,
+    required String newProviderId,
+  }) async {
+    final h = _handle;
+    if (h == null) throw const VaultLockedException();
+    await _persist(h.data.withMovedAccount(
+      accountId,
+      newProviderId: newProviderId,
+      now: DateTime.now(),
+    ));
+  }
+
+  Future<void> removeAccount(String accountId) async {
+    final h = _handle;
+    if (h == null) throw const VaultLockedException();
+    await _persist(h.data.withoutAccount(accountId));
+  }
+
+  // ---------------------------------------------------------------------------
+  // Credential operations
+  // ---------------------------------------------------------------------------
+
+  Future<void> addCredentialToAccount({
+    required String accountId,
+    required Credential draft,
+  }) async {
+    final h = _handle;
+    if (h == null) throw const VaultLockedException();
+    await _persist(h.data.withCredential(
+      accountId,
+      draft,
+      now: DateTime.now(),
+    ));
+  }
+
+  /// Convenience: create a new account under [providerId] holding [draft].
+  Future<Account> addCredentialAsNewAccount({
+    required String providerId,
+    required String displayName,
+    required Credential draft,
+  }) async {
+    final h = _handle;
+    if (h == null) throw const VaultLockedException();
+    final now = DateTime.now();
+    final account = Account(
+      id: _uuid.v4(),
+      providerId: providerId,
+      displayName: displayName.trim(),
+      createdAt: now,
+      updatedAt: now,
+      credentials: [draft],
+    );
+    await _persist(h.data.withNewAccount(account));
+    return account;
+  }
+
+  /// Convenience: create a new ServiceProvider AND a new account holding [draft].
+  Future<({ServiceProvider provider, Account account})>
+      addCredentialAsNewProviderAndAccount({
+    required String providerName,
+    required String accountDisplayName,
+    required Credential draft,
+  }) async {
+    final h = _handle;
+    if (h == null) throw const VaultLockedException();
+    final now = DateTime.now();
+    final provider = ServiceProvider(
+      id: _uuid.v4(),
+      name: providerName.trim(),
+      createdAt: now,
+      updatedAt: now,
+    );
+    final account = Account(
+      id: _uuid.v4(),
+      providerId: provider.id,
+      displayName: accountDisplayName.trim(),
+      createdAt: now,
+      updatedAt: now,
+      credentials: [draft],
+    );
+    final newData = h.data
+        .withNewProvider(provider)
+        .withNewAccount(account);
+    await _persist(newData);
+    return (provider: provider, account: account);
+  }
+
+  Future<void> removeCredentialFromAccount({
+    required String accountId,
+    required String credentialId,
+  }) async {
+    final h = _handle;
+    if (h == null) throw const VaultLockedException();
+    await _persist(h.data.withoutCredential(
+      accountId,
+      credentialId,
+      now: DateTime.now(),
+    ));
+  }
+
+  /// Replaces a credential's content while preserving its id and createdAt.
+  /// Used for editing a [RecoveryCodesCredential]'s codes list. The
+  /// [replacement] MUST share its id with the existing credential.
+  Future<void> replaceCredentialInAccount({
+    required String accountId,
+    required Credential replacement,
+  }) async {
+    final h = _handle;
+    if (h == null) throw const VaultLockedException();
+    await _persist(h.data.withReplacedCredential(
+      accountId,
+      replacement.id,
+      replacement,
+      now: DateTime.now(),
+    ));
+  }
+
+  /// Moves a credential from one account to another, preserving id, createdAt,
+  /// and contents. No-op when both ids are equal.
+  Future<void> moveCredentialToAccount({
+    required String fromAccountId,
+    required String credentialId,
+    required String toAccountId,
+  }) async {
+    final h = _handle;
+    if (h == null) throw const VaultLockedException();
+    await _persist(h.data.withMovedCredential(
+      fromAccountId,
+      credentialId,
+      toAccountId,
+      now: DateTime.now(),
+    ));
+  }
+
+  /// Merges [sourceAccountId] into [targetAccountId]: appends every credential
+  /// from the source to the target (preserving order), then deletes the
+  /// source account. The target's provider, id, displayName, and createdAt
+  /// are left unchanged; only `updatedAt` is bumped.
+  Future<void> mergeAccountInto({
+    required String sourceAccountId,
+    required String targetAccountId,
+  }) async {
+    final h = _handle;
+    if (h == null) throw const VaultLockedException();
+    await _persist(h.data.withMergedAccount(
+      sourceAccountId,
+      targetAccountId,
+      now: DateTime.now(),
+    ));
+  }
+
+  // ---------------------------------------------------------------------------
+  // Developer entries — unchanged behavior.
+  // ---------------------------------------------------------------------------
 
   Future<void> setDeveloperBackupEnabled(bool enabled) async {
     final h = _handle;
     if (h == null) throw const VaultLockedException();
-
-    final updated = h.data.copyWith(
+    await _persist(h.data.copyWith(
       developerSettings: h.data.developerSettings.copyWith(enabled: enabled),
-    );
-
-    _handle = h.copyWith(data: updated);
-    await _repo.save(_handle!);
-    notifyListeners();
+    ));
   }
 
   Future<void> addDeveloperEntry({
@@ -179,7 +335,6 @@ class VaultSession extends ChangeNotifier {
   }) async {
     final h = _handle;
     if (h == null) throw const VaultLockedException();
-
     final now = DateTime.now();
     final entry = DeveloperEntry(
       id: _uuid.v4(),
@@ -190,14 +345,9 @@ class VaultSession extends ChangeNotifier {
       updatedAt: now,
       payload: Map.unmodifiable(payload),
     );
-
-    final updated = h.data.copyWith(
+    await _persist(h.data.copyWith(
       developerEntries: <DeveloperEntry>[...h.data.developerEntries, entry],
-    );
-
-    _handle = h.copyWith(data: updated);
-    await _repo.save(_handle!);
-    notifyListeners();
+    ));
   }
 
   Future<void> updateDeveloperEntry({
@@ -208,7 +358,6 @@ class VaultSession extends ChangeNotifier {
   }) async {
     final h = _handle;
     if (h == null) throw const VaultLockedException();
-
     final now = DateTime.now();
     final updatedEntries = h.data.developerEntries
         .map((entry) {
@@ -221,26 +370,16 @@ class VaultSession extends ChangeNotifier {
           );
         })
         .toList(growable: false);
-
-    _handle = h.copyWith(
-      data: h.data.copyWith(developerEntries: updatedEntries),
-    );
-    await _repo.save(_handle!);
-    notifyListeners();
+    await _persist(h.data.copyWith(developerEntries: updatedEntries));
   }
 
   Future<void> removeDeveloperEntry(String id) async {
     final h = _handle;
     if (h == null) throw const VaultLockedException();
-
-    final updated = h.data.copyWith(
+    await _persist(h.data.copyWith(
       developerEntries: h.data.developerEntries
           .where((entry) => entry.id != id)
           .toList(growable: false),
-    );
-
-    _handle = h.copyWith(data: updated);
-    await _repo.save(_handle!);
-    notifyListeners();
+    ));
   }
 }

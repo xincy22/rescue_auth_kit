@@ -60,12 +60,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lockTooltip => 'Lock Vault';
 
   @override
-  String get tabTotp => 'TOTP';
-
-  @override
-  String get tabRecovery => 'Recovery';
-
-  @override
   String get tabBackup => 'Backup';
 
   @override
@@ -141,9 +135,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get totpEmpty => 'No TOTP entries yet. Tap + to import.';
-
-  @override
   String get totpCopied => 'TOTP code copied';
 
   @override
@@ -152,16 +143,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get totpNoIssuer => '(No issuer)';
-
-  @override
-  String get totpDeleteTitle => 'Delete this TOTP entry?';
-
-  @override
   String get addTotpSheetScan => 'Scan QR';
-
-  @override
-  String get addTotpSheetPaste => 'Paste otpauth URI';
 
   @override
   String get pasteDialogTitle => 'Paste otpauth URI';
@@ -208,18 +190,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get recoveryEmpty => 'No recovery codes yet. Tap + to add.';
-
-  @override
-  String get recoveryNoTitle => '(No title)';
-
-  @override
   String recoveryCodesCount(Object count) {
     return '$count codes';
   }
-
-  @override
-  String get recoveryDeleteTitle => 'Delete this recovery set?';
 
   @override
   String get deleteButton => 'Delete';
@@ -232,9 +205,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addRecoveryTitle => 'Add Recovery Codes';
-
-  @override
-  String get titleOptionalLabel => 'Title (optional)';
 
   @override
   String get recoveryCodesLabel => 'Recovery codes (one per line)';
@@ -407,4 +377,172 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get developerHideSecret => 'Hide secret';
+
+  @override
+  String get tabAccounts => 'Accounts';
+
+  @override
+  String get tabProviders => 'Providers';
+
+  @override
+  String get accountsListEmpty => 'No accounts yet. Tap + to add a credential.';
+
+  @override
+  String get providersListEmpty =>
+      'No providers yet. Tap + to add a credential.';
+
+  @override
+  String providersListAccountCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count accounts',
+      one: '1 account',
+      zero: 'No accounts',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get providerNameLabel => 'Provider name';
+
+  @override
+  String get providerActions => 'Provider actions';
+
+  @override
+  String get providerRename => 'Rename provider';
+
+  @override
+  String get providerDelete => 'Delete provider';
+
+  @override
+  String providerDeleteConfirm(String name) {
+    return 'Delete provider \"$name\" and all its accounts?';
+  }
+
+  @override
+  String get pickerModeNewProvider => 'New provider';
+
+  @override
+  String get pickerModeExistingProvider => 'Existing provider';
+
+  @override
+  String get pickerModeExistingAccount => 'Existing account';
+
+  @override
+  String get destinationSelectorTitle => 'Save to';
+
+  @override
+  String get destinationLockedToProvider => 'Save under provider';
+
+  @override
+  String get destinationLockedToAccount => 'Save to account';
+
+  @override
+  String get accountMoveTitle => 'Move to provider';
+
+  @override
+  String get accountMoveAction => 'Move to provider...';
+
+  @override
+  String get accountMoveConfirm => 'Move';
+
+  @override
+  String get accountMergeTitle => 'Merge into another account';
+
+  @override
+  String get accountMergeAction => 'Merge into...';
+
+  @override
+  String get accountMergeConfirm => 'Merge';
+
+  @override
+  String get accountMergeTargetLabel => 'Target account';
+
+  @override
+  String get accountMergeNoOtherAccounts =>
+      'There are no other accounts to merge into.';
+
+  @override
+  String accountMergePrompt(String name) {
+    return 'Append all credentials of \"$name\" to the target account, then delete this account.';
+  }
+
+  @override
+  String get credentialMoveTitle => 'Move to another account';
+
+  @override
+  String get credentialMoveAction => 'Move to account...';
+
+  @override
+  String get credentialMoveNoOtherAccounts =>
+      'There are no other accounts to move this credential to.';
+
+  @override
+  String get credentialEditAction => 'Edit codes...';
+
+  @override
+  String get editRecoveryTitle => 'Edit Recovery Codes';
+
+  @override
+  String get accountsBadgeTotp => 'TOTP';
+
+  @override
+  String get accountsBadgeRecovery => 'Recovery';
+
+  @override
+  String get accountDetailRename => 'Rename';
+
+  @override
+  String get accountDetailDeleteAccount => 'Delete account';
+
+  @override
+  String get accountDetailDeleteAccountConfirm =>
+      'Delete this account and all its credentials?';
+
+  @override
+  String get accountDetailAddCredential => 'Add credential to this account';
+
+  @override
+  String get accountDetailDeleteCredential => 'Delete credential';
+
+  @override
+  String get accountDetailDeleteCredentialConfirm => 'Delete this credential?';
+
+  @override
+  String get accountDetailEmptyState =>
+      'No credentials yet. Add one to get started.';
+
+  @override
+  String get accountPickerTitle => 'Choose destination';
+
+  @override
+  String get accountPickerCreateNew => 'Create new account';
+
+  @override
+  String get accountPickerAttachExisting => 'Attach to existing account';
+
+  @override
+  String get accountPickerSearchPlaceholder => 'Search accounts';
+
+  @override
+  String get addCredentialSheetTitle => 'Add credential';
+
+  @override
+  String get addCredentialScan => 'Scan QR';
+
+  @override
+  String get addCredentialPaste => 'Paste otpauth URI';
+
+  @override
+  String get addCredentialRecoveryCodes => 'Add recovery codes';
+
+  @override
+  String vaultFormatErrorFutureVersion(int n) {
+    return 'Vault was created by a newer app version (schemaVersion = $n).';
+  }
+
+  @override
+  String get vaultFormatErrorGeneric =>
+      'Vault format is invalid and cannot be opened.';
 }

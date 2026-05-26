@@ -7,6 +7,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import '../crypto/vault_crypto.dart';
+import 'vault_migrator.dart';
 import 'vault_models.dart';
 
 class VaultAuthException implements Exception {
@@ -126,8 +127,16 @@ class VaultRepository {
           'Decrypted payload is not a JSON object',
         );
       }
-      final data = _upgradeDataIfNeeded(VaultData.fromJson(obj));
-      if (data.schemaVersion != (obj['schemaVersion'] as int? ?? 1)) {
+
+      final inputSchemaVersion = (obj['schemaVersion'] as int?) ?? 1;
+
+      // Run the migrator on the raw JSON — handles v1/v2→v3 and identity for v3.
+      // VaultFormatException is thrown for future versions (> vaultDataSchemaVersion).
+      final data = const VaultMigrator().migrate(obj);
+
+      // Eagerly rewrite the file when the on-disk schema was older than v3.
+      // Uses the same derived key — no re-derivation needed.
+      if (inputSchemaVersion < vaultDataSchemaVersion) {
         await _writeEncrypted(data: data, key: key, kdfParams: vaultFile.kdf);
       }
 
@@ -139,6 +148,8 @@ class VaultRepository {
       );
     } on SecretBoxAuthenticationError {
       throw const VaultAuthException();
+    } on VaultFormatException {
+      rethrow;
     } on FormatException catch (e) {
       throw VaultFormatException('Invalid vault payload: $e');
     }
@@ -183,7 +194,9 @@ class VaultRepository {
           'Decrypted payload is not a JSON object',
         );
       }
-      final data = _upgradeDataIfNeeded(VaultData.fromJson(obj));
+
+      // Run the migrator on the raw JSON — same logic as open.
+      final data = const VaultMigrator().migrate(obj);
 
       await _writeEncrypted(data: data, key: key, kdfParams: vaultFile.kdf);
 
@@ -195,6 +208,10 @@ class VaultRepository {
       );
     } on SecretBoxAuthenticationError {
       throw const VaultAuthException();
+    } on VaultFormatException {
+      rethrow;
+    } on FormatException catch (e) {
+      throw VaultFormatException('Invalid vault payload: $e');
     }
   }
 
@@ -246,10 +263,4 @@ class VaultRepository {
     }
   }
 
-  VaultData _upgradeDataIfNeeded(VaultData data) {
-    if (data.schemaVersion >= vaultDataSchemaVersion) {
-      return data;
-    }
-    return data.copyWith();
-  }
 }

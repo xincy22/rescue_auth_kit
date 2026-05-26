@@ -34,6 +34,14 @@ class _UnlockScreenState extends State<UnlockScreen> {
       await context.read<VaultSession>().unlock(password: _pw.text);
     } on VaultAuthException {
       setState(() => _error = l10n.incorrectPassword);
+    } on VaultFormatException catch (e) {
+      final schemaMatch = RegExp(r'schemaVersion\s*=\s*(\d+)').firstMatch(e.message);
+      if (schemaMatch != null) {
+        final version = int.parse(schemaMatch.group(1)!);
+        setState(() => _error = l10n.vaultFormatErrorFutureVersion(version));
+      } else {
+        setState(() => _error = l10n.vaultFormatErrorGeneric);
+      }
     } catch (e) {
       setState(() => _error = l10n.unlockFailed(e.toString()));
     } finally {
